@@ -18,8 +18,6 @@ export default function FollowButton({ post }) {
     }
   }, [isFollowing]);
   return (
-    <Button onClickButton={onFollow}>
-      {isFollowing ? "언팔로우" : "팔로우"}
-    </Button>
+    <Button onClick={onFollow}>{isFollowing ? "언팔로우" : "팔로우"}</Button>
   );
 }
