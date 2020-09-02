@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { Form, Input, Button, Checkbox } from "antd";
 import Link from "next/link";
 import styled from "styled-components";
@@ -15,7 +15,7 @@ const ButtonWrapper = styled.div`
 `;
 
 export default function LoginForm({ setIsLoggedIn }) {
-  const { logInLoading } = useSelector((state) => state.user);
+  const { logInLoading, logInError } = useSelector((state) => state.user);
   const [email, onChangeEmail] = useInput("");
   const [password, onChangePassword] = useInput("");
   const dispatch = useDispatch();
@@ -23,7 +23,11 @@ export default function LoginForm({ setIsLoggedIn }) {
     console.log(email, password);
     dispatch(logInRequestAction({ email, password }));
   }, [email, password]);
-
+  useEffect(() => {
+    if (logInError) {
+      alert(logInError);
+    }
+  }, [logInError]);
   return (
     <FormWrapper onFinish={onSubmitForm}>
       <div>

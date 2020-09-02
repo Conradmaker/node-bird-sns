@@ -129,7 +129,7 @@ export default function reducer(state = initialState, action) {
         break;
       case LOG_IN_FAILURE:
         draft.logInError = action.error;
-        draft.logInLoading + false;
+        draft.logInLoading = false;
         draft.logInDone = false;
         break;
 
