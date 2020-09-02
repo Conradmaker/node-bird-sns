@@ -26,12 +26,12 @@ function followAPI(data) {
   const response = axios.post("/user/follow");
   return response.data;
 }
-function logInAPI(data) {
-  const response = axios.post("/user/login");
+async function logInAPI(data) {
+  const response = await axios.post("/user/login", data);
   return response.data;
 }
 function logOutAPI(data) {
-  const response = axios.post("/logOut");
+  const response = axios.post("/user/logOut");
   return response.data;
 }
 function signUpAPI(data) {
@@ -75,9 +75,10 @@ function* logIn(action) {
     const data = yield call(logInAPI, action.data);
     yield put({
       type: LOG_IN_SUCCESS,
-      data: data,
+      data,
     });
   } catch (e) {
+    console.error(e);
     yield put({
       type: LOG_IN_FAILURE,
       error: e.response.data,
@@ -103,6 +104,7 @@ function* signUp(action) {
   try {
     console.log("saga signup");
     const data = yield call(signUpAPI, action.data);
+    console.log("saga signup done");
     console.log(data);
     yield put({
       type: SIGN_UP_SUCCESS,

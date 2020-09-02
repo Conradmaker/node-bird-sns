@@ -125,7 +125,7 @@ export default function reducer(state = initialState, action) {
         draft.logInLoading = false;
         draft.logInDone = true;
         draft.logInError = null;
-        draft.me = dummyUser(action.data);
+        draft.me = action.data;
         break;
       case LOG_IN_FAILURE:
         draft.logInError = action.error;

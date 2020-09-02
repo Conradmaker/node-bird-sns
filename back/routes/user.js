@@ -8,16 +8,15 @@ const router = express.Router();
 //미들웨어 확장 (req,res,next를 쓰기 위해)
 router.post("/login", (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
-    //인자 3개는 done에서 설정한 3개
+    //done에서 설정한 3개
     if (err) {
       console.error(err);
       return next(err);
     }
     if (info) {
-      return res.status(401).send(info.reason); //허가되지 않음
+      return res.status(401).send(info.reason);
     }
     return req.login(user, async (loginErr) => {
-      //패스포트 로그인 에러
       if (loginErr) {
         console.error(loginErr);
         return next(loginErr);
@@ -25,6 +24,12 @@ router.post("/login", (req, res, next) => {
       return res.status(200).json(user);
     });
   })(req, res, next);
+});
+
+router.post("/logout", (req, res, next) => {
+  req.logOut();
+  req.session.destroy();
+  res.send("OK");
 });
 
 router.post("/", async (req, res, next) => {

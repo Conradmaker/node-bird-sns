@@ -21,7 +21,7 @@ export default function LoginForm({ setIsLoggedIn }) {
   const dispatch = useDispatch();
   const onSubmitForm = useCallback(() => {
     console.log(email, password);
-    dispatch(logInRequestAction(email, password));
+    dispatch(logInRequestAction({ email, password }));
   }, [email, password]);
 
   return (

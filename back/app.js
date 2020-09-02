@@ -2,16 +2,22 @@ const express = require("express");
 const postRouter = require("./routes/post");
 const userRouter = require("./routes/user");
 const cors = require("cors");
+const cookieParser = require("cookie-parser");
+const session = require("express-session");
 const db = require("./models");
 const passportConfig = require("./passport");
 const passport = require("passport");
+const dotenv = require("dotenv");
 
+dotenv.config();
 const app = express();
 
-db.sequelize.sync().then(() => {
-  console.log("연결성공").catch(console.error());
-});
-
+db.sequelize
+  .sync()
+  .then(() => {
+    console.log("연결성공");
+  })
+  .catch(console.error());
 passportConfig();
 
 app.use(
@@ -22,9 +28,17 @@ app.use(
 //req.body를 읽기 위해
 app.use(express.json()); // json형식받기
 app.use(express.urlencoded({ extended: true })); //form-submit을 했을때
-app.use(session());
+//로그인위해
+app.use(cookieParser(process.env.COOKIE_SECRET));
+app.use(
+  session({
+    saveUninitialized: false,
+    resave: false,
+    secret: process.env.COOKIE_SECRET,
+  })
+);
 app.use(passport.initialize());
-app.use(passport.session);
+app.use(passport.session());
 
 app.get("/", (req, res) => {
   res.send("asdasd");

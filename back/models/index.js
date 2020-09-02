@@ -2,7 +2,7 @@ const Sequelize = require("sequelize");
 //환경변수
 const env = process.env.NODE_ENV || "development";
 //env는 현재 development
-const config = require("../config/config.json")[env];
+const config = require("../config/config")[env];
 const db = {};
 
 //연결
