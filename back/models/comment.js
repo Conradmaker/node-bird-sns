@@ -9,6 +9,9 @@ module.exports = (sequelize, DataTypes) => {
       collate: "utf8mb4_general_ci", //한글,이모티콘저장
     }
   );
-  Comment.associate = (db) => {};
+  Comment.associate = (db) => {
+    db.Comment.belongsTo(db.User); //댓글은 작성자에 속해있다.
+    db.Comment.belongsTo(db.Post); //댓글은 작성자에 속해있다.
+  };
   return Comment;
 };
