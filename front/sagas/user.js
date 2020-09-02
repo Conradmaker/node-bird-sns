@@ -17,31 +17,27 @@ import {
   UNFOLLOW_SUCCESS,
   UNFOLLOW_FAILURE,
 } from "../reducers/user";
+
 function unfollowAPI(data) {
-  //제네레이터 아님!!
-  const response = axios.post("/api/unfollow");
+  const response = axios.post("/user/unfollow");
   return response.data;
 }
 function followAPI(data) {
-  //제네레이터 아님!!
-  const response = axios.post("/api/follow");
+  const response = axios.post("/user/follow");
   return response.data;
 }
 function logInAPI(data) {
-  //제네레이터 아님!!
-  const response = axios.post("/api/login");
+  const response = axios.post("/user/login");
   return response.data;
 }
 function logOutAPI(data) {
-  //제네레이터 아님!!
-  const response = axios.post("/api/logOut");
+  const response = axios.post("/logOut");
   return response.data;
 }
 function signUpAPI(data) {
-  //제네레이터 아님!!
-  const response = axios.post("/api/signUp");
-  return response.data;
+  return axios.post("/user", data);
 }
+
 function* follow(action) {
   try {
     console.log("saga follow");
@@ -76,12 +72,10 @@ function* unfollow(action) {
 }
 function* logIn(action) {
   try {
-    console.log("saga logIn");
-    yield delay(1000);
-    //const data = yield call(logInAPI, action.data);
+    const data = yield call(logInAPI, action.data);
     yield put({
       type: LOG_IN_SUCCESS,
-      data: action.data,
+      data: data,
     });
   } catch (e) {
     yield put({
@@ -108,19 +102,22 @@ function* logOut() {
 function* signUp(action) {
   try {
     console.log("saga signup");
-    yield delay(1000);
-    //const data = yield call(logOutAPI, action.data);
+    const data = yield call(signUpAPI, action.data);
+    console.log(data);
     yield put({
       type: SIGN_UP_SUCCESS,
       data: action.data,
     });
-  } catch (e) {
+  } catch (err) {
+    console.error(err);
+
     yield put({
       type: SIGN_UP_FAILURE,
-      error: e.response.data,
+      error: err.response.data,
     });
   }
 }
+
 function* watchFollow() {
   yield takeEvery(FOLLOW_REQUEST, follow);
 }
@@ -137,6 +134,7 @@ function* watchLogOut() {
 function* watchSignUp() {
   yield takeEvery(SIGN_UP_REQUEST, signUp);
 }
+
 export default function* userSaga() {
   yield all([
     fork(watchFollow),

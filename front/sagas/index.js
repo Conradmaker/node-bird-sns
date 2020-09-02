@@ -8,6 +8,9 @@
 import { all, fork } from "redux-saga/effects";
 import postSaga from "./post";
 import userSaga from "./user";
+import axios from "axios";
+
+axios.defaults.baseURL = "http://localhost:3030";
 
 export default function* rootSaga() {
   // all은 배열을 받아 한방에 실행해준다
