@@ -126,7 +126,7 @@ export default function reducer(state = initialState, action) {
         draft.addPostLoading = false;
         draft.addPostDone = true;
         draft.addPostError = null;
-        draft.mainPosts.unshift(dummyPost(action.data)); //앞에 추가해야 게시글이 위에 나타난다.
+        draft.mainPosts.unshift(action.data); //앞에 추가해야 게시글이 위에 나타난다.
         break;
       case ADD_POST_FAILURE:
         draft.addPostLoading = false;
@@ -154,8 +154,8 @@ export default function reducer(state = initialState, action) {
         draft.addCommentCommentError = null;
         break;
       case ADD_COMMENT_SUCCESS: {
-        const post = draft.mainPosts.find((v) => v.id === action.data.postId);
-        post.Comments.unshift(dummyComment(action.data.content));
+        const post = draft.mainPosts.find((v) => v.id === action.data.PostId);
+        post.Comments.unshift(action.data);
         draft.addCommentLoading = false;
         draft.addCommentDone = true;
         break;

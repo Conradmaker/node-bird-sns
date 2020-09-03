@@ -10,7 +10,7 @@ const SearchInput = styled(Input.Search)`
   vertical-align: center;
 `;
 export default function AppLayout({ children }) {
-  const { me, logInDone } = useSelector((state) => state.user);
+  const { me } = useSelector((state) => state.user);
 
   return (
     <>

@@ -31,16 +31,16 @@ function loadPostAPI(data) {
   return response.data;
 }
 
-function addPostAPI(data) {
-  const response = axios.post("/api/post");
+async function addPostAPI(data) {
+  const response = await axios.post("/post", { content: data });
   return response.data;
 }
 function removePostAPI(data) {
   const response = axios.delete("/api/post");
   return response.data;
 }
-function addCommentAPI(data) {
-  const response = axios.post(`/api/post/${data.postId}/comment`, data);
+async function addCommentAPI(data) {
+  const response = await axios.post(`/post/${data.postId}/comment`, data);
   return response.data;
 }
 function* loadPost(action) {
@@ -61,19 +61,14 @@ function* loadPost(action) {
 }
 function* addPost(action) {
   try {
-    yield delay(1000);
-    const id = shortid.generate();
-    // const data = yield call(addPostAPI, action.data);
+    const data = yield call(addPostAPI, action.data);
     yield put({
       type: ADD_POST_SUCCESS,
-      data: {
-        id,
-        content: action.data,
-      },
+      data,
     });
     yield put({
       type: ADD_POST_TO_ME,
-      data: id,
+      data: data.id, //DB등록된 게시글아이디
     });
   } catch (e) {
     yield put({
@@ -105,19 +100,15 @@ function* removePost(action) {
 }
 function* addComment(action) {
   try {
-    console.log("asdasd");
-    yield delay(1000);
-    console.log("asdasd2");
-    // const data = yield call(addCOMMENTAPI, action.data);
+    const data = yield call(addCommentAPI, action.data);
     yield put({
       type: ADD_COMMENT_SUCCESS,
-      data: action.data,
+      data,
     });
   } catch (e) {
-    console.log("asdasd3");
     yield put({
       type: ADD_COMMENT_FAILURE,
-      data: e.response.data,
+      error: e.response.data,
     });
   }
 }

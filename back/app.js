@@ -22,7 +22,8 @@ passportConfig();
 
 app.use(
   cors({
-    origin: "*",
+    origin: "http://localhost:3000",
+    credentials: true, //쿠키공유
   })
 );
 //req.body를 읽기 위해
