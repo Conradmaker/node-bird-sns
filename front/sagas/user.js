@@ -16,8 +16,14 @@ import {
   FOLLOW_FAILURE,
   UNFOLLOW_SUCCESS,
   UNFOLLOW_FAILURE,
+  LOAD_MY_INFO_REQUEST,
+  LOAD_MY_INFO_SUCCESS,
+  LOAD_MY_INFO_FAILURE,
 } from "../reducers/user";
-
+async function loadUserAPI() {
+  const response = await axios.get("/user");
+  return response.data;
+}
 function unfollowAPI(data) {
   const response = axios.post("/user/unfollow");
   return response.data;
@@ -38,6 +44,20 @@ function signUpAPI(data) {
   return axios.post("/user", data);
 }
 
+function* loadUser() {
+  try {
+    const data = yield call(loadUserAPI);
+    yield put({
+      type: LOAD_MY_INFO_SUCCESS,
+      data,
+    });
+  } catch (e) {
+    yield put({
+      type: LOAD_MY_INFO_FAILURE,
+      error: e.response.data,
+    });
+  }
+}
 function* follow(action) {
   try {
     console.log("saga follow");
@@ -118,7 +138,9 @@ function* signUp(action) {
     });
   }
 }
-
+function* watchLoadUser() {
+  yield takeEvery(LOAD_MY_INFO_REQUEST, loadUser);
+}
 function* watchFollow() {
   yield takeEvery(FOLLOW_REQUEST, follow);
 }
@@ -138,6 +160,7 @@ function* watchSignUp() {
 
 export default function* userSaga() {
   yield all([
+    fork(watchLoadUser),
     fork(watchFollow),
     fork(watchUnfollow),
     fork(watchLogin),

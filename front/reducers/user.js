@@ -1,5 +1,9 @@
 import produce from "immer";
 
+export const LOAD_MY_INFO_REQUEST = "users/LOAD_MY_INFO_REQUEST";
+export const LOAD_MY_INFO_SUCCESS = "users/LOAD_MY_INFO_SUCCESS";
+export const LOAD_MY_INFO_FAILURE = "users/LOAD_MY_INFO_FAILURE";
+
 export const LOG_IN_REQUEST = "users/LOG_IN_REQUEST";
 export const LOG_IN_SUCCESS = "users/LOG_IN_SUCCESS";
 export const LOG_IN_FAILURE = "users/LOG_IN_FAILURE";
@@ -48,6 +52,10 @@ export const logInRequestAction = (data) => ({ type: LOG_IN_REQUEST, data });
 export const logOutRequestAction = () => ({ type: LOG_OUT_REQUEST });
 
 export const initialState = {
+  loadUserDone: false,
+  loadUserError: null,
+  loadUserLoading: false,
+
   followDone: false,
   followError: null,
   followLoading: false,
@@ -80,6 +88,23 @@ export const initialState = {
 export default function reducer(state = initialState, action) {
   return produce(state, (draft) => {
     switch (action.type) {
+      case LOAD_MY_INFO_REQUEST:
+        draft.loadUserLoading = true;
+        draft.loadUserDone = false;
+        draft.loadUserError = null;
+        break;
+      case LOAD_MY_INFO_SUCCESS:
+        draft.loadUserLoading = false;
+        draft.loadUserDone = true;
+        draft.loadUserError = null;
+        draft.me = action.data;
+        break;
+      case LOAD_MY_INFO_FAILURE:
+        draft.loadUserError = action.error;
+        draft.loadUserLoading = false;
+        draft.loadUserDone = false;
+        break;
+
       case UNFOLLOW_REQUEST:
         draft.unfollowLoading = true;
         draft.unfollowDone = false;
@@ -95,7 +120,7 @@ export default function reducer(state = initialState, action) {
         break;
       case UNFOLLOW_FAILURE:
         draft.unfollowError = action.error;
-        draft.unfollowLoading + false;
+        draft.unfollowLoading = false;
         draft.unfollowDone = false;
         break;
 

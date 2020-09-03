@@ -6,6 +6,33 @@ const { isLoggedIn, isNotLoggedIn } = require("./middlewares");
 
 const router = express.Router();
 
+//로그인 풀리지 않도록   (useEffect써주면 되겠지?)
+router.get("/", async (req, res, next) => {
+  try {
+    if (req.user) {
+      //사용자가 있으면
+      const fullUserWithoutPassword = await User.findOne({
+        where: { id: req.user.id },
+        //가져올 데이터
+        //attributes:['id','nickname','email'] //id,nickname, email만 가져오겠다.
+        attributes: { exclude: ["password"] }, //비밀번호 빼고
+        //관계데이터
+        include: [
+          { model: Post, attributes: ["id"] }, // 개시글 말고 아이디만 (몇개 몇명인지만 세니까)
+          { model: User, as: "Followings", attributes: ["id"] }, //as 써줬으면 여기서도 써줘야함
+          { model: User, as: "Followers", attributes: ["id"] },
+        ],
+      });
+      res.status(200).json(fullUserWithoutPassword); //쿠키 있으면 보내고
+    } else {
+      res.status(200).json(null); //없으면 안보내고
+    }
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
+});
+
 //미들웨어 확장 (req,res,next를 쓰기 위해)
 router.post("/login", isNotLoggedIn, (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
