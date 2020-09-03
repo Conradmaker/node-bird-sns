@@ -50,6 +50,11 @@ app.get("/api", (req, res) => {
 app.use("/post", postRouter);
 app.use("/user", userRouter);
 
+//에러처리 미들웨어 (err,req,res,next) 4개
+//에러페이지를 보내주거나, 에러 내용은 바꾼다거나..
+//원래는 내부적으로 존재함
+app.use((err, req, res, next) => {});
+
 app.listen(3030, () => {
   console.log("실행");
 });

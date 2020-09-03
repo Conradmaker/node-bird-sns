@@ -30,9 +30,9 @@ async function logInAPI(data) {
   const response = await axios.post("/user/login", data);
   return response.data;
 }
-function logOutAPI(data) {
-  const response = axios.post("/user/logOut");
-  return response.data;
+function logOutAPI() {
+  const response = axios.post("/user/logout");
+  return response;
 }
 function signUpAPI(data) {
   return axios.post("/user", data);
@@ -88,8 +88,7 @@ function* logIn(action) {
 
 function* logOut() {
   try {
-    yield delay(1000);
-    // const data = yield call(signUpAPI);
+    yield call(logOutAPI);
     yield put({
       type: LOG_OUT_SUCCESS,
     });

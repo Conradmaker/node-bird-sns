@@ -2,11 +2,12 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const passport = require("passport");
 const { User, Post } = require("../models"); //db.User를 가져온다
+const { isLoggedIn, isNotLoggedIn } = require("./middlewares");
 
 const router = express.Router();
 
 //미들웨어 확장 (req,res,next를 쓰기 위해)
-router.post("/login", (req, res, next) => {
+router.post("/login", isNotLoggedIn, (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
     //done에서 설정한 3개
     if (err) {
@@ -39,13 +40,13 @@ router.post("/login", (req, res, next) => {
   })(req, res, next);
 });
 
-router.post("/logout", (req, res, next) => {
+router.post("/logout", isLoggedIn, (req, res, next) => {
   req.logOut();
   req.session.destroy();
   res.send("OK");
 });
 
-router.post("/", async (req, res, next) => {
+router.post("/", isNotLoggedIn, async (req, res, next) => {
   try {
     //중복값 조회 (없으면 exUser = null)
     const exUser = await User.findOne({
