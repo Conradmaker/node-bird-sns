@@ -1,6 +1,7 @@
 const express = require("express");
 const postRouter = require("./routes/post");
 const userRouter = require("./routes/user");
+const postsRouter = require("./routes/posts");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
@@ -8,8 +9,10 @@ const db = require("./models");
 const passportConfig = require("./passport");
 const passport = require("passport");
 const dotenv = require("dotenv");
+const morgan = require("morgan");
 
 dotenv.config();
+
 const app = express();
 
 db.sequelize
@@ -19,7 +22,7 @@ db.sequelize
   })
   .catch(console.error());
 passportConfig();
-
+app.use(morgan("dev"));
 app.use(
   cors({
     origin: "http://localhost:3000",
@@ -49,6 +52,7 @@ app.get("/api", (req, res) => {
   res.send("helloapi");
 });
 app.use("/post", postRouter);
+app.use("/posts", postsRouter);
 app.use("/user", userRouter);
 
 //에러처리 미들웨어 (err,req,res,next) 4개

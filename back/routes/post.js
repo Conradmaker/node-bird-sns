@@ -14,7 +14,11 @@ router.post("/", async (req, res, next) => {
     //Image 추가해주기
     const fullPost = await Post.findOne({
       where: { id: post.id },
-      include: [{ model: Image }, { model: Comment }, { model: User }],
+      include: [
+        { model: Image },
+        { model: Comment },
+        { model: User, attributes: ["id", "nickname"] },
+      ],
     });
     res.status(201).json(fullPost); //생성되었다고 프론트로
   } catch (e) {
@@ -36,10 +40,19 @@ router.post("/:id/comment", isLoggedIn, async (req, res, next) => {
     }
     const comment = await Comment.create({
       content: req.body.content,
-      PostId: req.params.id, //:id 에 있는 정보
+      PostId: parseInt(req.params.id, 10), //:id 에 있는 정보
       UserId: req.user.id,
     });
-    res.status(201).json(comment); //생성되었다고 프론트로
+    const fullComment = await Comment.findOne({
+      where: { id: comment.id },
+      include: [
+        {
+          model: User,
+          attributes: ["id", "nickname"],
+        },
+      ],
+    });
+    res.status(201).json(fullComment); //생성되었다고 프론트로
   } catch (e) {
     console.error(e);
     next(e);

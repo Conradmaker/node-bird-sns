@@ -40,6 +40,7 @@ export default function index() {
     <>
       <AppLayout>
         {me && <PostForm />}
+
         {mainPosts.map((post) => (
           <PostCard key={post.id} post={post} />
         ))}

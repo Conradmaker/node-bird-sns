@@ -21,13 +21,11 @@ import {
   LOAD_POSTS_REQUEST,
   LOAD_POSTS_SUCCESS,
   LOAD_POSTS_FAILURE,
-  generateDummyPost,
 } from "../reducers/post";
 import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from "../reducers/user";
-import shortid from "shortid";
 
-function loadPostAPI(data) {
-  const response = axios.post("/api/post");
+async function loadPostAPI(data) {
+  const response = await axios.get("/posts");
   return response.data;
 }
 
@@ -43,14 +41,12 @@ async function addCommentAPI(data) {
   const response = await axios.post(`/post/${data.postId}/comment`, data);
   return response.data;
 }
-function* loadPost(action) {
+function* loadPost() {
   try {
-    yield delay(1000);
-    const id = shortid.generate();
-    // const data = yield call(loadPostAPI, action.data);
+    const data = yield call(loadPostAPI);
     yield put({
       type: LOAD_POSTS_SUCCESS,
-      data: generateDummyPost(10),
+      data,
     });
   } catch (e) {
     yield put({
@@ -106,6 +102,7 @@ function* addComment(action) {
       data,
     });
   } catch (e) {
+    console.error(e);
     yield put({
       type: ADD_COMMENT_FAILURE,
       error: e.response.data,
