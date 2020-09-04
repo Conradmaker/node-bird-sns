@@ -90,6 +90,7 @@ router.patch("/nickname", isLoggedIn, async (req, res, next) => {
   }
 });
 
+//회원가입
 router.post("/", isNotLoggedIn, async (req, res, next) => {
   try {
     //중복값 조회 (없으면 exUser = null)

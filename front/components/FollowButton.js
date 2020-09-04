@@ -17,6 +17,10 @@ export default function FollowButton({ post }) {
       dispatch({ type: FOLLOW_REQUEST, data: post.User.id });
     }
   }, [isFollowing]);
+  //나일때 안보이게
+  if (post.User.id === me.id) {
+    return null;
+  }
   return (
     <Button onClick={onFollow}>{isFollowing ? "언팔로우" : "팔로우"}</Button>
   );
