@@ -39,8 +39,8 @@ async function addPostAPI(data) {
   const response = await axios.post("/post", { content: data });
   return response.data;
 }
-function removePostAPI(data) {
-  const response = axios.delete("/api/post");
+async function removePostAPI(data) {
+  const response = await axios.delete(`post/${data}`);
   return response.data;
 }
 async function addCommentAPI(data) {
@@ -90,9 +90,7 @@ function* addPost(action) {
 
 function* removePost(action) {
   try {
-    yield delay(1000);
-    const id = shortid.generate();
-    // const data = yield call(addPostAPI, action.data);
+    const data = yield call(removePostAPI, action.data);
     yield put({
       type: REMOVE_POST_SUCCESS,
       data: action.data,

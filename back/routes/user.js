@@ -73,6 +73,23 @@ router.post("/logout", isLoggedIn, (req, res) => {
   res.send("ok");
 });
 
+//닉네임 수정
+router.patch("/nickname", isLoggedIn, async (req, res, next) => {
+  try {
+    await User.update(
+      //update= sequelize수정메소드
+      {
+        nickname: req.body.nickname, //닉네임 수정
+      },
+      { where: { id: req.user.id } } //로그인된 사용자의 User
+    );
+    res.status(200).json({ nickname: req.body.nickname });
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
+});
+
 router.post("/", isNotLoggedIn, async (req, res, next) => {
   try {
     //중복값 조회 (없으면 exUser = null)

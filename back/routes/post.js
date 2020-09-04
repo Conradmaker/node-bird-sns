@@ -59,7 +59,25 @@ router.post("/:id/comment", isLoggedIn, async (req, res, next) => {
     next(e);
   }
 });
-router.patch("/:id/like", async (req, res, next) => {
+//삭제 (작성과 삭제는 정검을 철저히!!!)
+router.delete("/:id", isLoggedIn, async (req, res, next) => {
+  try {
+    await Post.destroy({
+      //sequelize에서삭제메소드
+      where: {
+        id: req.params.id,
+        UserId: req.user.id, //보안을위해 자기 자신아이디일경우만
+      },
+    });
+    res.status(200).json({ id: parseInt(req.params.id, 10) }); //params는 문자열
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
+});
+
+//좋아요
+router.patch("/:id/like", isLoggedIn, async (req, res, next) => {
   //일단 게시글이 있는지 찾는다.
   try {
     const post = await Post.findOne({ where: { id: req.params.id } });
@@ -74,7 +92,7 @@ router.patch("/:id/like", async (req, res, next) => {
     next(e);
   }
 });
-router.delete("/:id/unlike", async (req, res, next) => {
+router.delete("/:id/unlike", isLoggedIn, async (req, res, next) => {
   try {
     const post = await Post.findOne({ where: { id: req.params.id } });
     if (!post) {
