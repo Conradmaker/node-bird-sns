@@ -27,12 +27,12 @@ async function loadUserAPI() {
   const response = await axios.get("/user");
   return response.data;
 }
-function unfollowAPI(data) {
-  const response = axios.post("/user/unfollow");
+async function unfollowAPI(data) {
+  const response = await axios.delete(`/user/${data}/follow`);
   return response.data;
 }
-function followAPI(data) {
-  const response = axios.post("/user/follow");
+async function followAPI(data) {
+  const response = await axios.patch(`/user/${data}/follow`);
   return response.data;
 }
 async function logInAPI(data) {
@@ -67,14 +67,13 @@ function* loadUser() {
 }
 function* follow(action) {
   try {
-    console.log("saga follow");
-    yield delay(1000);
-    //const data = yield call(followAPI, action.data);
+    const data = yield call(followAPI, action.data);
     yield put({
       type: FOLLOW_SUCCESS,
-      data: action.data,
+      data,
     });
   } catch (e) {
+    console.error(e);
     yield put({
       type: FOLLOW_FAILURE,
       error: e.response.data,
@@ -83,14 +82,13 @@ function* follow(action) {
 }
 function* unfollow(action) {
   try {
-    console.log("saga unfollow");
-    yield delay(1000);
-    //const data = yield call(unfollowAPI, action.data);
+    const data = yield call(unfollowAPI, action.data);
     yield put({
       type: UNFOLLOW_SUCCESS,
-      data: action.data,
+      data,
     });
   } catch (e) {
+    console.error(e);
     yield put({
       type: UNFOLLOW_FAILURE,
       error: e.response.data,

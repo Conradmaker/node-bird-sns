@@ -98,7 +98,7 @@ export default function reducer(state = initialState, action) {
         draft.unfollowDone = true;
         draft.unfollowError = null;
         draft.me.Followings = draft.me.Followings.filter(
-          (v) => v.id !== action.data
+          (v) => v.id !== action.data.id
         );
         break;
       case UNFOLLOW_FAILURE:
@@ -116,11 +116,11 @@ export default function reducer(state = initialState, action) {
         draft.followLoading = false;
         draft.followDone = true;
         draft.followError = null;
-        draft.me.Followings.push({ id: action.data });
+        draft.me.Followings.push(action.data);
         break;
       case FOLLOW_FAILURE:
         draft.followError = action.error;
-        draft.followLoading + false;
+        draft.followLoading = false;
         draft.followDone = false;
         break;
 

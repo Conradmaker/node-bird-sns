@@ -73,6 +73,42 @@ router.post("/logout", isLoggedIn, (req, res) => {
   res.send("ok");
 });
 
+//팔로우  patch post/:id/follow
+router.patch("/:id/follow", isLoggedIn, async (req, res, next) => {
+  try {
+    //유저가 있는 유저인지 확인
+    const exUser = await User.findOne({
+      where: { id: req.params.id },
+    });
+    if (!exUser) {
+      res.status(403).send("없는 유저인데요?");
+    }
+    await exUser.addFollower(req.user.id); //sequelize에서 만들어준 관계메소드
+    res.status(200).json({ id: parseInt(req.params.id, 10) });
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
+});
+
+//언팔로우  delete post/:id/unfollow
+router.delete("/:id/follow", isLoggedIn, async (req, res, next) => {
+  try {
+    //유저가 있는 유저인지 확인
+    const exUser = await User.findOne({
+      where: { id: req.params.id },
+    });
+    if (!exUser) {
+      res.status(403).send("없는 유저인데요?");
+    }
+    await exUser.removeFollowers(req.user.id); //sequelize에서 만들어준 관계메소드
+    res.status(200).json({ id: parseInt(req.params.id, 10) });
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
+});
+
 //닉네임 수정
 router.patch("/nickname", isLoggedIn, async (req, res, next) => {
   try {
