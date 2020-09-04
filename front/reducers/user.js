@@ -28,6 +28,18 @@ export const CHANGE_NICKNAME_REQUEST = "users/CHANGE_NICKNAME_REQUEST";
 export const CHANGE_NICKNAME_SUCCESS = "users/CHANGE_NICKNAME_SUCCESS";
 export const CHANGE_NICKNAME_FAILURE = "users/CHANGE_NICKNAME_FAILURE";
 
+export const LOAD_FOLLOWERS_REQUEST = "users/LOAD_FOLLOWERS_REQUEST";
+export const LOAD_FOLLOWERS_SUCCESS = "users/LOAD_FOLLOWERS_SUCCESS";
+export const LOAD_FOLLOWERS_FAILURE = "users/LOAD_FOLLOWERS_FAILURE";
+
+export const LOAD_FOLLOWINGS_REQUEST = "users/LOAD_FOLLOWINGS_REQUEST";
+export const LOAD_FOLLOWINGS_SUCCESS = "users/LOAD_FOLLOWINGS_SUCCESS";
+export const LOAD_FOLLOWINGS_FAILURE = "users/LOAD_FOLLOWINGS_FAILURE";
+
+export const REMOVE_FOLLOWER_REQUEST = "users/REMOVE_FOLLOWER_REQUEST";
+export const REMOVE_FOLLOWER_SUCCESS = "users/REMOVE_FOLLOWER_SUCCESS";
+export const REMOVE_FOLLOWER_FAILURE = "users/REMOVE_FOLLOWER_FAILURE";
+
 export const ADD_POST_TO_ME = "ADD_POST_TO_ME";
 export const REMOVE_POST_OF_ME = "REMOVE_POST_OF_ME";
 
@@ -62,6 +74,18 @@ export const initialState = {
   changeNickNameDone: false,
   changeNickNameError: null,
   changeNickNameLoading: false,
+
+  loadFollowingsDone: false,
+  loadFollowingsError: null,
+  loadFollowingsLoading: false,
+
+  loadFollowersDone: false,
+  loadFollowersError: null,
+  loadFollowersLoading: false,
+
+  removeFollowerDone: false,
+  removeFollowerError: null,
+  removeFollowerLoading: false,
 
   me: null,
   signUpData: {},
@@ -187,6 +211,59 @@ export default function reducer(state = initialState, action) {
         draft.changeNickNameDone = false;
         draft.changeNickNameLoading = false;
         draft.changeNickNameError = action.error;
+        break;
+
+      case LOAD_FOLLOWERS_REQUEST:
+        draft.loadFollowersLoading = true;
+        draft.loadFollowersDone = false;
+        draft.loadFollowersError = null;
+        break;
+      case LOAD_FOLLOWERS_SUCCESS:
+        draft.loadFollowersDone = true;
+        draft.loadFollowersLoading = false;
+        draft.loadFollowersError = null;
+        draft.me.Followers = action.data;
+        break;
+      case LOAD_FOLLOWERS_FAILURE:
+        draft.loadFollowersDone = false;
+        draft.loadFollowersLoading = false;
+        draft.loadFollowersError = action.error;
+        break;
+
+      case LOAD_FOLLOWINGS_REQUEST:
+        draft.loadFollowingsLoading = true;
+        draft.loadFollowingsDone = false;
+        draft.loadFollowingsError = null;
+        break;
+      case LOAD_FOLLOWINGS_SUCCESS:
+        draft.loadFollowingsDone = true;
+        draft.loadFollowingsLoading = false;
+        draft.loadFollowingsError = null;
+        draft.me.Followings = action.data;
+        break;
+      case LOAD_FOLLOWINGS_FAILURE:
+        draft.loadFollowingsDone = false;
+        draft.loadFollowingsLoading = false;
+        draft.loadFollowingsError = action.error;
+        break;
+
+      case REMOVE_FOLLOWER_REQUEST:
+        draft.removeFollowerLoading = true;
+        draft.removeFollowerDone = false;
+        draft.removeFollowerError = null;
+        break;
+      case REMOVE_FOLLOWER_SUCCESS:
+        draft.removeFollowerLoading = false;
+        draft.removeFollowerDone = true;
+        draft.removeFollowerError = null;
+        draft.me.Followers = draft.me.Followers.filter(
+          (v) => v.id !== action.data.id
+        );
+        break;
+      case REMOVE_FOLLOWER_FAILURE:
+        draft.removeFollowerError = action.error;
+        draft.removeFollowerLoading = false;
+        draft.removeFollowerDone = false;
         break;
 
       case ADD_POST_TO_ME:

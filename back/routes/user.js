@@ -154,4 +154,62 @@ router.post("/", isNotLoggedIn, async (req, res, next) => {
   }
 });
 
+//프로필 페이지 팔로워 목록 가져오기  GET/user/followers
+router.get("/followers", isLoggedIn, async (req, res, next) => {
+  try {
+    //조회요청 보낸 로그인된 유저 정보먼저 찾고
+    const user = await User.findOne({
+      where: { id: req.user.id },
+    });
+    if (!user) {
+      res.status(403).send("없는 유저인데요?");
+    }
+    const followers = await user.getFollowers(); //sequelize에서 만들어준 관계메소드
+    res.status(200).json(followers);
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
+});
+//프로필 페이지 팔로잉 목록 가져오기  GET/user/following
+router.get("/followings", isLoggedIn, async (req, res, next) => {
+  try {
+    //조회요청 보낸 로그인된 유저 정보먼저 찾고
+    const user = await User.findOne({
+      where: { id: req.user.id },
+    });
+    if (!user) {
+      res.status(403).send("없는 유저인데요?");
+    }
+    const followings = await user.getFollowings({
+      model: User,
+      attributes: ["id", "nickname"],
+    }); //sequelize에서 만들어준 관계메소드
+    res.status(200).json(followings);
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
+});
+
+//프로필 팔로워 제거 (상대방 차단의 의미)
+router.delete("/follower/:id", isLoggedIn, async (req, res, next) => {
+  try {
+    //나를 먼저 찾고
+    const user = await User.findOne({
+      where: { id: req.params.id },
+    });
+
+    if (!user) {
+      res.status(403).send("없는 유저인데요?");
+    }
+    // 내 팔로워중 그 사람 제거  내가 끊는거랑 반대의 관계
+    await user.removeFollowing(req.user.id); //sequelize에서 만들어준 관계메소드
+    res.status(200).json({ id: parseInt(req.params.id, 10) });
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
+});
+
 module.exports = router;

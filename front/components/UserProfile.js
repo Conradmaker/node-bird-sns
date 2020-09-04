@@ -9,6 +9,7 @@ export default function UserProfile({ setIsLoggedIn }) {
   const onLogOut = useCallback(() => {
     dispatch(logOutRequestAction());
   }, []);
+
   return (
     <Card
       actions={[
