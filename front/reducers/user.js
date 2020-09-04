@@ -27,26 +27,8 @@ export const UNFOLLOW_FAILURE = "users/UNFOLLOW_FAILURE";
 export const CHANGE_NICKNAME_REQUEST = "users/CHANGE_NICKNAME_REQUEST";
 export const CHANGE_NICKNAME_SUCCESS = "users/CHANGE_NICKNAME_SUCCESS";
 export const CHANGE_NICKNAME_FAILURE = "users/CHANGE_NICKNAME_FAILURE";
-
 export const ADD_POST_TO_ME = "ADD_POST_TO_ME";
 export const REMOVE_POST_OF_ME = "REMOVE_POST_OF_ME";
-
-const dummyUser = (data) => ({
-  ...data,
-  nickname: "원근",
-  id: 1,
-  Posts: [{ id: 1 }],
-  Followings: [
-    { nickname: "conrad" },
-    { nickname: "conrad2" },
-    { nickname: "conrad3" },
-  ],
-  Followers: [
-    { nickname: "conrad" },
-    { nickname: "conrad2" },
-    { nickname: "conrad3" },
-  ],
-});
 
 export const logInRequestAction = (data) => ({ type: LOG_IN_REQUEST, data });
 export const logOutRequestAction = () => ({ type: LOG_OUT_REQUEST });
@@ -204,6 +186,7 @@ export default function reducer(state = initialState, action) {
         draft.changeNickNameLoading = false;
         draft.changeNickNameError = action.error;
         break;
+
       case ADD_POST_TO_ME:
         draft.me.Posts.unshift({ id: action.data });
         break;

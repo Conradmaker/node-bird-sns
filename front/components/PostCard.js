@@ -13,18 +13,25 @@ import { useSelector, useDispatch } from "react-redux";
 import PostImages from "./PostImages";
 import CommentForm from "./CommentForm";
 import PostCardContent from "./PostCardContent";
-import { REMOVE_POST_REQUEST } from "../reducers/post";
+import {
+  REMOVE_POST_REQUEST,
+  LIKE_POST_REQUEST,
+  UNLIKE_POST_REQUEST,
+} from "../reducers/post";
 import FollowButton from "./FollowButton";
-//14분 21초
 export default function PostCard({ post }) {
   const { removePostLoading } = useSelector((state) => state.post);
   const id = useSelector((state) => state.user.me && state.user.me.id);
   const dispatch = useDispatch();
   // const id = useSelector((state) => state.user.me?.id); //옵셔널 체이닝
   const [commentFormOpened, setCommentFormOpened] = useState(false);
-  const [liked, setLiked] = useState(false);
-  const onToggleLike = () => {
-    setLiked(!liked);
+  //직접 만들자
+  const liked = post.Likers.find((v) => v.id === id); //개시글 좋아요 사람들중 내가 있는지
+  const onLike = () => {
+    dispatch({ type: LIKE_POST_REQUEST, data: post.id });
+  };
+  const onUnLike = () => {
+    dispatch({ type: UNLIKE_POST_REQUEST, data: post.id });
   };
   const onToggleComment = () => {
     setCommentFormOpened(!commentFormOpened);
@@ -43,9 +50,9 @@ export default function PostCard({ post }) {
           //배열
           <RetweetOutlined key="retweet" />,
           liked ? (
-            <HeartTwoTone twoToneColor="red" onClick={onToggleLike} />
+            <HeartTwoTone twoToneColor="red" onClick={onUnLike} />
           ) : (
-            <HeartOutlined key="heart" onClick={onToggleLike} />
+            <HeartOutlined key="heart" onClick={onLike} />
           ),
           <MessageOutlined key="message" onClick={onToggleComment} />,
           <Popover

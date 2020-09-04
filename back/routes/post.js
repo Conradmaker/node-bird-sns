@@ -17,7 +17,8 @@ router.post("/", async (req, res, next) => {
       include: [
         { model: Image },
         { model: Comment },
-        { model: User, attributes: ["id", "nickname"] },
+        { model: User, attributes: ["id", "nickname"] }, //작성자
+        { model: User, as: "Likers", attributes: ["id"] }, //좋아요 누른사람
       ],
     });
     res.status(201).json(fullPost); //생성되었다고 프론트로
@@ -58,7 +59,32 @@ router.post("/:id/comment", isLoggedIn, async (req, res, next) => {
     next(e);
   }
 });
-router.delete("/", (req, res) => {
-  res.json({});
+router.patch("/:id/like", async (req, res, next) => {
+  //일단 게시글이 있는지 찾는다.
+  try {
+    const post = await Post.findOne({ where: { id: req.params.id } });
+    if (!post) {
+      return res.status(403).send("게시글이 존재하지 않습니다.");
+    }
+    //관계데이터를보면 sequlize에서 addLikers, post.removeLikers같은 메서드가 생긴다. post.js참고
+    await post.addLikers(req.user.id);
+    res.json({ PostId: post.id, UserId: req.user.id });
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
+});
+router.delete("/:id/unlike", async (req, res, next) => {
+  try {
+    const post = await Post.findOne({ where: { id: req.params.id } });
+    if (!post) {
+      return res.status(403).send("게시글이 존재하지 않습니다.");
+    }
+    await post.removeLikers(req.user.id);
+    res.json({ PostId: post.id, UserId: req.user.id });
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
 });
 module.exports = router;

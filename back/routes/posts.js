@@ -15,7 +15,8 @@ router.get("/", async (req, res, next) => {
       ],
 
       include: [
-        { model: User, attributes: ["id", "nickname"] }, //작성자 정보
+        { model: User, attributes: ["id", "nickname"] }, //작성자
+        { model: User, as: "Likers", attributes: ["id"] }, //좋아요 누른사람
         { model: Image },
         {
           model: Comment, //댓글작성자를 다시

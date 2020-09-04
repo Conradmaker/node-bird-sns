@@ -25,6 +25,14 @@ export const initialState = {
   addCommentLoading: false,
   addCommentDone: false,
   addCommentError: null,
+
+  likePostDone: false,
+  likePostError: null,
+  likePostLoading: false,
+
+  unlikePostDone: false,
+  unlikePostError: null,
+  unlikePostLoading: false,
 };
 //concat에는 항상대입을!
 
@@ -44,6 +52,14 @@ export const REMOVE_POST_FAILURE = "REMOVE_POST_FAILURE";
 export const ADD_COMMENT_REQUEST = "ADD_COMMENT_REQUEST";
 export const ADD_COMMENT_SUCCESS = "ADD_COMMENT_SUCCESS";
 export const ADD_COMMENT_FAILURE = "ADD_COMMENT_FAILURE";
+
+export const LIKE_POST_REQUEST = "users/LIKE_POST_REQUEST";
+export const LIKE_POST_SUCCESS = "users/LIKE_POST_SUCCESS";
+export const LIKE_POST_FAILURE = "users/LIKE_POST_FAILURE";
+
+export const UNLIKE_POST_REQUEST = "users/UNLIKE_POST_REQUEST";
+export const UNLIKE_POST_SUCCESS = "users/UNLIKE_POST_SUCCESS";
+export const UNLIKE_POST_FAILURE = "users/UNLIKE_POST_FAILURE";
 
 export const addPost = (data) => ({
   type: ADD_POST_REQUEST,
@@ -109,13 +125,51 @@ export default function reducer(state = initialState, action) {
         draft.addCommentDone = false;
         draft.addCommentCommentError = null;
         break;
-      case ADD_COMMENT_SUCCESS: {
+      case ADD_COMMENT_SUCCESS:
         const post = draft.mainPosts.find((v) => v.id === action.data.PostId);
         post.Comments.unshift(action.data);
         draft.addCommentLoading = false;
         draft.addCommentDone = true;
         break;
+
+      case UNLIKE_POST_REQUEST:
+        draft.unlikePostLoading = true;
+        draft.unlikePostDone = false;
+        draft.unlikePostError = null;
+        break;
+      case UNLIKE_POST_SUCCESS: {
+        const post = draft.mainPosts.find((v) => v.id === action.data.PostId);
+        post.Likers = post.Likers.filter((v) => v.id !== action.data.UserId);
+        draft.unlikePostLoading = false;
+        draft.unlikePostDone = true;
+        draft.unlikePostError = null;
+        break;
       }
+      case UNLIKE_POST_FAILURE:
+        draft.unlikePostError = action.error;
+        draft.unlikePostLoading = false;
+        draft.unlikePostDone = false;
+        break;
+
+      case LIKE_POST_REQUEST:
+        draft.likePostLoading = true;
+        draft.likePostDone = false;
+        draft.likePostError = null;
+        break;
+      case LIKE_POST_SUCCESS: {
+        //받아온 데이터중 게시글아이디로 게시글을 찾아서
+        const post = draft.mainPosts.find((v) => v.id === action.data.PostId);
+        post.Likers.push({ id: action.data.UserId }); //Likets에 추가
+        draft.likePostLoading = false;
+        draft.likePostDone = true;
+        draft.likePostError = null;
+        break;
+      }
+      case LIKE_POST_FAILURE:
+        draft.likePostError = action.error;
+        draft.likePostLoading = false;
+        draft.likePostDone = false;
+        break;
       case ADD_COMMENT_FAILURE:
         draft.addCommentLoading = false;
         draft.addCommentDone = false;
