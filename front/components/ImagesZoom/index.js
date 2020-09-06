@@ -32,7 +32,7 @@ export default function index({ images, onClose }) {
             {/* 안에 있는 이미지들 구현 */}
             {images.map((v) => (
               <ImgWrapper key={v.src}>
-                <img src={v.src} alt={v.src} />
+                <img src={`http://localhost:3030/${v.src}`} alt={v.src} />
               </ImgWrapper>
             ))}
           </Slick>

@@ -36,12 +36,28 @@ const upload = multer({
 //왠만하면 서버를 거치면 자원을 먹기 때문에 프론트에서 바로 서버로 올려준다.
 
 //게시글 등록 POST /post
-router.post("/", async (req, res, next) => {
+router.post("/", upload.none(), async (req, res, next) => {
   try {
     const post = await Post.create({
       content: req.body.content,
       UserId: req.user.id, //deserializeUser에서 가져오는 것.(req.user로 접근)
     });
+    //image는 front에서append로 정해준 키
+    if (req.body.image) {
+      if (Array.isArray(req.body.image)) {
+        //이미지를 여러개 올리면 image:[1.png,2.png]
+        const images = await Promise.all(
+          //한번에 모두 완료되면 올려준다.
+          req.body.image.map((image) => Image.create({ src: image })) //Image 모델에 넣어준다.
+        );
+        await post.addImages(images); //Sequelize매소드로 images를 넣어준다.
+      } else {
+        //이미지를 하나만 올리면 image:1.png
+        const image = await Image.create({ src: req.body.image });
+        await post.addImages(image);
+      }
+    }
+    //DB에는 IMAGE를 올리지 않고 서버에 가지고 있다가 DB에는 경로만 저장하는게 좋음 (DB는 캐싱 불가)
     //Image 추가해주기
     const fullPost = await Post.findOne({
       where: { id: post.id },

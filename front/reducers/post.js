@@ -126,6 +126,7 @@ export default function reducer(state = initialState, action) {
         draft.addPostDone = true;
         draft.addPostError = null;
         draft.mainPosts.unshift(action.data); //앞에 추가해야 게시글이 위에 나타난다.
+        draft.imagePath = []; //이걸 해줘야 미리보기를 초기화한다.
         break;
       case ADD_POST_FAILURE:
         draft.addPostLoading = false;

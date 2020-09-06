@@ -2,7 +2,12 @@ import React, { useState, useRef, useEffect, useCallback } from "react";
 import { Form, Input, Button } from "antd";
 import { useSelector, useDispatch } from "react-redux";
 import useInput from "../hooks/useInput";
-import { addPost, UPLOAD_IMAGES_REQUEST, REMOVE_IMAGE } from "../reducers/post";
+import {
+  addPost,
+  UPLOAD_IMAGES_REQUEST,
+  REMOVE_IMAGE,
+  ADD_POST_REQUEST,
+} from "../reducers/post";
 
 export default function PostForm() {
   const { imagePath, addPostDone } = useSelector((state) => state.post);
@@ -16,7 +21,17 @@ export default function PostForm() {
   const dispatch = useDispatch();
   const imageInput = useRef();
   const onSubmit = () => {
-    dispatch(addPost(text));
+    //게시글 없으면 경고
+    if (!text || !text.trim()) {
+      return alert("게시글을 작성하세요");
+    }
+    const formData = new FormData();
+    imagePath.forEach((q) => {
+      formData.append("image", q); //키가 image 백에서 req.body.image
+    });
+    formData.append("content", text); //키가 content 백에서 req.body.content
+    //이미지가 없으면 formData를 쓸 필요가 없지만, multer nono을 써보기 위해
+    dispatch({ type: ADD_POST_REQUEST, data: formData });
   };
   const onClickImageUpload = () => {
     imageInput.current.click(); //파일 업로드

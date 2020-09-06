@@ -39,7 +39,7 @@ async function loadPostAPI(data) {
 }
 
 async function addPostAPI(data) {
-  const response = await axios.post("/post", { content: data });
+  const response = await axios.post("/post", data);
   return response.data;
 }
 async function removePostAPI(data) {
