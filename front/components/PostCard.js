@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { Card, Button, Avatar, Popover, List, Comment } from "antd";
 
 import {
@@ -17,10 +17,13 @@ import {
   REMOVE_POST_REQUEST,
   LIKE_POST_REQUEST,
   UNLIKE_POST_REQUEST,
+  RETWEET_REQUEST,
 } from "../reducers/post";
 import FollowButton from "./FollowButton";
 export default function PostCard({ post }) {
-  const { removePostLoading } = useSelector((state) => state.post);
+  const { removePostLoading, retweetError } = useSelector(
+    (state) => state.post
+  );
   const id = useSelector((state) => state.user.me && state.user.me.id);
   const dispatch = useDispatch();
   // const id = useSelector((state) => state.user.me?.id); //옵셔널 체이닝
@@ -42,13 +45,21 @@ export default function PostCard({ post }) {
       data: post.id,
     });
   };
+  const onRetweet = useCallback(() => {
+    if (!id) {
+      //로그인 안한사람 막기
+      return alert("로그인 해주세요");
+    }
+    return dispatch({ type: RETWEET_REQUEST, data: post.id });
+  });
+
   return (
     <div style={{ marginBottom: 20 }}>
       <Card
         cover={post.Images[0] && <PostImages images={post.Images} />}
         actions={[
           //배열
-          <RetweetOutlined key="retweet" />,
+          <RetweetOutlined key="retweet" onClick={onRetweet} />,
           liked ? (
             <HeartTwoTone twoToneColor="red" onClick={onUnLike} />
           ) : (
@@ -79,13 +90,31 @@ export default function PostCard({ post }) {
             <EllipsisOutlined />
           </Popover>,
         ]}
+        title={post.RetweetId ? `${post.User.nickname}님이 리트윗` : null}
         extra={id && <FollowButton post={post} />}
       >
-        <Card.Meta
-          avatar={<Avatar>{post.User.nickname[0]}</Avatar>}
-          title={post.User.nickname}
-          description={<PostCardContent postData={post.content} />}
-        />
+        {/* 리트윗 된 게시글인지 아닌지에 따른 렌더링 */}
+        {post.RetweetId && post.Retweet ? (
+          <Card
+            cover={
+              post.Retweet.Images[0] && (
+                <PostImages images={post.Retweet.Images} />
+              )
+            }
+          >
+            <Card.Meta
+              avatar={<Avatar>{post.Retweet.User.nickname[0]}</Avatar>}
+              title={post.Retweet.User.nickname}
+              description={<PostCardContent postData={post.Retweet.content} />}
+            />
+          </Card>
+        ) : (
+          <Card.Meta
+            avatar={<Avatar>{post.User.nickname[0]}</Avatar>}
+            title={post.User.nickname}
+            description={<PostCardContent postData={post.content} />}
+          />
+        )}
       </Card>
       {commentFormOpened && (
         <>

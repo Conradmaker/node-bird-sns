@@ -22,6 +22,15 @@ router.get("/", async (req, res, next) => {
           model: Comment, //댓글작성자를 다시
           include: [{ model: User, attributes: ["id", "nickname"] }],
         },
+        {
+          //리트윗 게시글 포함하도록
+          model: Post,
+          as: "Retweet",
+          include: [
+            { model: User, attributes: ["id", "nickname"] },
+            { model: Image },
+          ],
+        },
       ],
     });
     res.status(200).json(posts);

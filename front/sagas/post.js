@@ -30,6 +30,9 @@ import {
   UPLOAD_IMAGES_REQUEST,
   UPLOAD_IMAGES_SUCCESS,
   UPLOAD_IMAGES_FAILURE,
+  RETWEET_REQUEST,
+  RETWEET_SUCCESS,
+  RETWEET_FAILURE,
 } from "../reducers/post";
 import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from "../reducers/user";
 
@@ -60,6 +63,10 @@ async function unlikePostAPI(data) {
 }
 async function uploadImagesAPI(data) {
   const response = await axios.post("post/images", data); //formData를 그대로 넣어줘야 함.
+  return response.data;
+}
+async function retweetAPI(data) {
+  const response = await axios.post(`/post/${data}/retweet`); //formData를 그대로 넣어줘야 함.
   return response.data;
 }
 
@@ -174,6 +181,21 @@ function* uploadImages(action) {
     });
   }
 }
+function* retweet(action) {
+  try {
+    const data = yield call(retweetAPI, action.data);
+    yield put({
+      type: RETWEET_SUCCESS,
+      data,
+    });
+  } catch (e) {
+    console.error(e);
+    yield put({
+      type: RETWEET_FAILURE,
+      error: e.response.data,
+    });
+  }
+}
 
 function* watchLoadPost() {
   yield throttle(5000, LOAD_POSTS_REQUEST, loadPost);
@@ -196,9 +218,13 @@ function* watchunlikePost() {
 function* watchuploadImages() {
   yield takeEvery(UPLOAD_IMAGES_REQUEST, uploadImages);
 }
+function* watchRetweet() {
+  yield takeEvery(RETWEET_REQUEST, retweet);
+}
 
 export default function* postSaga() {
   yield all([
+    fork(watchRetweet),
     fork(watchuploadImages),
     fork(watchLikePost),
     fork(watchunlikePost),

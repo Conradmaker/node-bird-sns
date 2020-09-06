@@ -37,6 +37,10 @@ export const initialState = {
   uploadImagesLoading: false,
   uploadImagesDone: false,
   uploadImagesError: null,
+
+  retweetLoading: false,
+  retweetDone: false,
+  retweetError: null,
 };
 //concat에는 항상대입을!
 
@@ -71,6 +75,10 @@ export const UNLIKE_POST_REQUEST = "users/UNLIKE_POST_REQUEST";
 export const UNLIKE_POST_SUCCESS = "users/UNLIKE_POST_SUCCESS";
 export const UNLIKE_POST_FAILURE = "users/UNLIKE_POST_FAILURE";
 
+export const RETWEET_REQUEST = "users/RETWEET_REQUEST";
+export const RETWEET_SUCCESS = "users/RETWEET_SUCCESS";
+export const RETWEET_FAILURE = "users/RETWEET_FAILURE";
+
 export const addPost = (data) => ({
   type: ADD_POST_REQUEST,
   data,
@@ -82,6 +90,23 @@ export const addComment = (data) => ({
 export default function reducer(state = initialState, action) {
   return produce(state, (draft) => {
     switch (action.type) {
+      case RETWEET_REQUEST:
+        draft.retweetLoading = true;
+        draft.retweetDone = false;
+        draft.retweetError = null;
+        break;
+      case RETWEET_SUCCESS:
+        draft.retweetLoading = false;
+        draft.retweetDone = true;
+        draft.retweetError = null;
+        draft.mainPosts.unshift(action.data);
+        break;
+      case RETWEET_FAILURE:
+        draft.retweetLoading = false;
+        draft.retweetDone = false;
+        draft.retweetError = action.error;
+        break;
+
       case UPLOAD_IMAGES_REQUEST:
         draft.uploadImagesLoading = true;
         draft.uploadImagesDone = false;
