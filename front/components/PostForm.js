@@ -62,7 +62,11 @@ export default function PostForm() {
       <div>
         {imagePath.map((v) => (
           <div key={v} style={{ display: "inline-block" }}>
-            <img src={v} style={{ width: "200px" }} alt={v} />
+            <img
+              src={`http://localhost:3030/${v}`} //미리보기 경로
+              style={{ width: "200px" }}
+              alt={v}
+            />
             <div>
               <Button>제거</Button>
             </div>

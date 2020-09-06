@@ -6,7 +6,7 @@ const path = require("path"); //노드 기본 제공
 const fs = require("fs"); //파일시스템 조작 (기본제공)
 
 const router = express.Router();
-
+//폴더 생성
 try {
   fs.accessSync("uploads"); //업로드 폴더가 있는지 검사를 하고,
 } catch (e) {

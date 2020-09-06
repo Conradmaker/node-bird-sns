@@ -10,6 +10,7 @@ const passportConfig = require("./passport");
 const passport = require("passport");
 const dotenv = require("dotenv");
 const morgan = require("morgan");
+const path = require("path");
 
 dotenv.config();
 
@@ -29,6 +30,10 @@ app.use(
     credentials: true, //쿠키공유
   })
 );
+//'/'는 localhost:3030/을 가르킨다.
+//path.join하면 __dirname(back)에 'uploads'를 합쳐준다.
+//이렇게 하면 서버쪽 폴더구조가 가려져서 보안에 유리하다.
+app.use("/", express.static(path.join(__dirname, "uploads")));
 //req.body를 읽기 위해
 app.use(express.json()); // json형식받기
 app.use(express.urlencoded({ extended: true })); //form-submit을 했을때
