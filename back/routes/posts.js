@@ -1,13 +1,20 @@
 //limit & lastId 방식
 const express = require("express");
 const { Post, Image, User, Comment } = require("../models/");
+const { Op } = require("sequelize"); //오피
 
 const router = express.Router();
 
 router.get("/", async (req, res, next) => {
   try {
+    const where = {};
+    if (parseInt(req.query.lastId, 10)) {
+      //초기 로딩이 아닐경우 이부분(초기로딩이면 0) lastId보다 작은걸 불러와라
+      where.id = { [Op.lt]: parseInt(req.query.lastId, 10) }; //보다 작은걸 불러오면 된다.
+    }
     //DB여러개 가져올떄
     const posts = await Post.findAll({
+      where,
       limit: 10, //10개만 가져와라
       order: [
         ["createdAt", "DESC"], //게시글늦게 생성된 순서로

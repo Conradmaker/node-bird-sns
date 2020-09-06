@@ -1,13 +1,5 @@
 import axios from "axios";
-import {
-  all,
-  fork,
-  takeEvery,
-  call,
-  put,
-  delay,
-  throttle,
-} from "redux-saga/effects";
+import { all, fork, takeEvery, call, put, throttle } from "redux-saga/effects";
 import {
   ADD_COMMENT_FAILURE,
   ADD_COMMENT_REQUEST,
@@ -36,8 +28,9 @@ import {
 } from "../reducers/post";
 import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from "../reducers/user";
 
-async function loadPostAPI(data) {
-  const response = await axios.get("/posts");
+async function loadPostAPI(lastId) {
+  //data가 undifined인 경우 0
+  const response = await axios.get(`/posts?lastId=${lastId || 0}`); //queryString (data 캐싱도 할 수 있다.)
   return response.data;
 }
 
@@ -70,9 +63,10 @@ async function retweetAPI(data) {
   return response.data;
 }
 
-function* loadPost() {
+function* loadPosts(action) {
   try {
-    const data = yield call(loadPostAPI);
+    console.log(action.lastId);
+    const data = yield call(loadPostAPI, action.lastId);
     yield put({
       type: LOAD_POSTS_SUCCESS,
       data,
@@ -198,7 +192,7 @@ function* retweet(action) {
 }
 
 function* watchLoadPost() {
-  yield throttle(5000, LOAD_POSTS_REQUEST, loadPost);
+  yield throttle(5000, LOAD_POSTS_REQUEST, loadPosts);
 }
 function* watchAddPost() {
   yield takeEvery(ADD_POST_REQUEST, addPost);

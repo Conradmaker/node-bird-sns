@@ -133,8 +133,8 @@ export default function reducer(state = initialState, action) {
         draft.loadPostsLoading = false;
         draft.loadPostsDone = true;
         draft.loadPostsError = null;
-        draft.mainPosts = action.data.concat(draft.mainPosts); //앞에 추가해야 게시글이 위에 나타난다.
-        draft.hasMorePost = draft.mainPosts.length < 50;
+        draft.mainPosts = draft.mainPosts.concat(action.data); //앞에 추가해야 게시글이 위에 나타난다.
+        draft.hasMorePost = action.data.length === 10;
         break;
       case LOAD_POSTS_FAILURE:
         draft.loadPostsLoading = false;

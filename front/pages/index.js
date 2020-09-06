@@ -27,12 +27,12 @@ export default function index() {
   useEffect(() => {
     function onScroll() {
       if (
-        window.scrollY + document.documentElement.clientHeight >
+        window.pageYOffset + document.documentElement.clientHeight >
         document.documentElement.scrollHeight - 300
       ) {
         if (hasMorePost && !loadPostsLoading) {
-          console.log("1");
-          dispatch({ type: LOAD_POSTS_REQUEST });
+          const lastId = mainPosts[mainPosts.length - 1]?.id;
+          dispatch({ type: LOAD_POSTS_REQUEST, lastId });
         }
       }
     }
@@ -41,7 +41,7 @@ export default function index() {
       window.removeEventListener("scroll", onScroll);
       //리턴해서 다시 삭제 안해주면 메모리에 쌓이게 된다.
     };
-  }, [hasMorePost]);
+  }, [hasMorePost, loadPostsLoading, mainPosts]);
   //redux에서 가져와주기
 
   return (
