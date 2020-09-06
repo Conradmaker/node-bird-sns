@@ -1,8 +1,39 @@
 const express = require("express");
 const { Post, Image, Comment, User } = require("../models");
 const { isLoggedIn } = require("./middlewares");
+const multer = require("multer");
+const path = require("path"); //노드 기본 제공
+const fs = require("fs"); //파일시스템 조작 (기본제공)
 
 const router = express.Router();
+
+try {
+  fs.accessSync("uploads"); //업로드 폴더가 있는지 검사를 하고,
+} catch (e) {
+  //없으면
+  console.log("폴더가 없으므로 생성합니다.");
+  fs.mkdirSync("uploads");
+}
+
+const upload = multer({
+  //어디에 저장
+  storage: multer.diskStorage({
+    destination(req, res, done) {
+      //저장위치
+      done(null, "uploads");
+    },
+    filename(req, file, done) {
+      // 같은 이름을 가지게 되면 덮어써지기 때문에 시간을 넣어준다.
+      const ext = path.extname(file.originalname); //확장자 추출(.png)
+      const basename = path.basename(file.originalname, ext); //파일명만 가져올 수 있다.(conrad)
+      done(null, basename + new Date().getTime() + ext); //conrad15184812928.png
+    },
+  }),
+  limits: { fileSize: 20 * 1024 * 1024 }, //20MB로 제한
+});
+//나중에는 서버로 경로를 바꿔준다.
+//컴터로 하게되면 서버를 옮길때마다 복사를 하기 때문에 서버용량을 잡아먹는다.
+//왠만하면 서버를 거치면 자원을 먹기 때문에 프론트에서 바로 서버로 올려준다.
 
 //게시글 등록 POST /post
 router.post("/", async (req, res, next) => {
@@ -105,4 +136,17 @@ router.delete("/:id/unlike", isLoggedIn, async (req, res, next) => {
     next(e);
   }
 });
+
+//이미지 업로드용 라우터
+// router마다 폼을 받는 형식이 다를 수 있기 때문에 post에서만 multer를 사용
+router.post(
+  "/images",
+  isLoggedIn,
+  upload.array("image"),
+  async (req, res, next) => {
+    console.log(req.files); //업로드된 파일들req.files에 담김
+    res.json(req.files.map((v) => v.filename));
+  }
+);
+
 module.exports = router;

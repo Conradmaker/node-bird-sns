@@ -6,7 +6,7 @@ import shortid from "shortid";
 
 export const initialState = {
   mainPosts: [],
-  imagePaths: [],
+  imagePath: [],
 
   hasMorePost: true,
 
@@ -33,10 +33,18 @@ export const initialState = {
   unlikePostDone: false,
   unlikePostError: null,
   unlikePostLoading: false,
+
+  uploadImagesLoading: false,
+  uploadImagesDone: false,
+  uploadImagesError: null,
 };
 //concat에는 항상대입을!
 
 //액션생성
+export const UPLOAD_IMAGES_REQUEST = "UPLOAD_IMAGES_REQUEST";
+export const UPLOAD_IMAGES_SUCCESS = "UPLOAD_IMAGES_SUCCESS";
+export const UPLOAD_IMAGES_FAILURE = "UPLOAD_IMAGES_FAILURE";
+
 export const LOAD_POSTS_REQUEST = "LOAD_POSTS_REQUEST";
 export const LOAD_POSTS_SUCCESS = "LOAD_POSTS_SUCCESS";
 export const LOAD_POSTS_FAILURE = "LOAD_POSTS_FAILURE";
@@ -72,6 +80,23 @@ export const addComment = (data) => ({
 export default function reducer(state = initialState, action) {
   return produce(state, (draft) => {
     switch (action.type) {
+      case UPLOAD_IMAGES_REQUEST:
+        draft.uploadImagesLoading = true;
+        draft.uploadImagesDone = false;
+        draft.uploadImagesError = null;
+        break;
+      case UPLOAD_IMAGES_SUCCESS:
+        draft.uploadImagesLoading = false;
+        draft.uploadImagesDone = true;
+        draft.uploadImagesError = null;
+        draft.imagePath = action.data; //백앤드에서 파일명을 보내줌
+        break;
+      case UPLOAD_IMAGES_FAILURE:
+        draft.uploadImagesLoading = false;
+        draft.uploadImagesDone = false;
+        draft.uploadImagesError = action.error;
+        break;
+
       case LOAD_POSTS_REQUEST:
         draft.loadPostsLoading = true;
         draft.loadPostsDone = false;
