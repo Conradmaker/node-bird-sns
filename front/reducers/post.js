@@ -41,6 +41,8 @@ export const initialState = {
 //concat에는 항상대입을!
 
 //액션생성
+export const REMOVE_IMAGE = "users/REMOVE_IMAGE";
+
 export const UPLOAD_IMAGES_REQUEST = "UPLOAD_IMAGES_REQUEST";
 export const UPLOAD_IMAGES_SUCCESS = "UPLOAD_IMAGES_SUCCESS";
 export const UPLOAD_IMAGES_FAILURE = "UPLOAD_IMAGES_FAILURE";
@@ -199,6 +201,11 @@ export default function reducer(state = initialState, action) {
         draft.addCommentLoading = false;
         draft.addCommentDone = false;
         draft.addCommentError = action.error;
+        break;
+
+      case REMOVE_IMAGE:
+        //프론트에서만 빼준다.
+        draft.imagePath = draft.imagePath.filter((v, i) => i !== action.data);
         break;
 
       default:

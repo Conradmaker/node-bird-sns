@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useCallback } from "react";
 import { Form, Input, Button } from "antd";
 import { useSelector, useDispatch } from "react-redux";
 import useInput from "../hooks/useInput";
-import { addPost, UPLOAD_IMAGES_REQUEST } from "../reducers/post";
+import { addPost, UPLOAD_IMAGES_REQUEST, REMOVE_IMAGE } from "../reducers/post";
 
 export default function PostForm() {
   const { imagePath, addPostDone } = useSelector((state) => state.post);
@@ -33,6 +33,12 @@ export default function PostForm() {
       data: imageFormData,
     });
   });
+  const onRemoveImage = useCallback((index) => {
+    dispatch({
+      type: REMOVE_IMAGE, //동기액션
+      data: index,
+    });
+  });
   return (
     <Form
       style={{ margin: "10px 0 20px" }}
@@ -60,15 +66,16 @@ export default function PostForm() {
         </Button>
       </div>
       <div>
-        {imagePath.map((v) => (
+        {imagePath.map((v, i) => (
           <div key={v} style={{ display: "inline-block" }}>
             <img
-              src={`http://localhost:3030/${v}`} //미리보기 경로
+              src={`http://localhost:3030/${v}`} //미리보기 경로(서버에 있는 이미지)
               style={{ width: "200px" }}
               alt={v}
             />
             <div>
-              <Button>제거</Button>
+              {/* 맵 안에 콜백에 데이터를 넣고 싶으면 고차함수로 */}
+              <Button onClick={() => onRemoveImage(i)}>제거</Button>
             </div>
           </div>
         ))}
