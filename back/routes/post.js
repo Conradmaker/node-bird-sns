@@ -1,5 +1,5 @@
 const express = require("express");
-const { Post, Image, Comment, User } = require("../models");
+const { Post, Image, Comment, User, Hashtag } = require("../models");
 const { isLoggedIn } = require("./middlewares");
 const multer = require("multer");
 const path = require("path"); //노드 기본 제공
@@ -36,12 +36,25 @@ const upload = multer({
 //왠만하면 서버를 거치면 자원을 먹기 때문에 프론트에서 바로 서버로 올려준다.
 
 //게시글 등록 POST /post
-router.post("/", upload.none(), async (req, res, next) => {
+router.post("/", isLoggedIn, upload.none(), async (req, res, next) => {
   try {
+    //해쉬태그 추출
+    const hashtags = req.body.content.match(/#[^\s#]+/g);
     const post = await Post.create({
       content: req.body.content,
-      UserId: req.user.id, //deserializeUser에서 가져오는 것.(req.user로 접근)
+      UserId: req.user.id,
     });
+    if (hashtags) {
+      const result = await Promise.all(
+        hashtags.map((tag) =>
+          Hashtag.findOrCreate({
+            //있으면 등록 없으면 등록 X
+            where: { name: tag.slice(1).toLowerCase() }, //slice로 #때준다.
+          })
+        )
+      ); // [[노드, true], [리액트, true]]
+      await post.addHashtags(result.map((v) => v[0]));
+    }
     //image는 front에서append로 정해준 키
     if (req.body.image) {
       if (Array.isArray(req.body.image)) {
