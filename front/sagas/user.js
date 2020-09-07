@@ -31,15 +31,18 @@ import {
   REMOVE_FOLLOWER_REQUEST,
   REMOVE_FOLLOWER_FAILURE,
   REMOVE_FOLLOWER_SUCCESS,
+  LOAD_USER_REQUEST,
+  LOAD_USER_FAILURE,
+  LOAD_USER_SUCCESS,
 } from "../reducers/user";
 async function loadMyInfoAPI() {
   const response = await axios.get("/user");
   return response.data;
 }
-// async function loadUserAPI(data) {
-//   const response = await axios.get(`/user/${data}`);
-//   return response.data;
-// }
+async function loadUserAPI(data) {
+  const response = await axios.get(`/user/${data}`);
+  return response.data;
+}
 async function unfollowAPI(data) {
   const response = await axios.delete(`/user/${data}/follow`);
   return response.data;
@@ -77,20 +80,20 @@ async function changeNicknameAPI(data) {
   return response.data;
 }
 
-// function* loadUser(action) {
-//   try {
-//     const data = yield call(loadUserAPI,action.data);
-//     yield put({
-//       type: LOAD_USER_SUCCESS,
-//       data,
-//     });
-//   } catch (e) {
-//     yield put({
-//       type: LOAD_USER_FAILURE,
-//       error: e.response.data,
-//     });
-//   }
-// }
+function* loadUser(action) {
+  try {
+    const data = yield call(loadUserAPI, action.data);
+    yield put({
+      type: LOAD_USER_SUCCESS,
+      data,
+    });
+  } catch (e) {
+    yield put({
+      type: LOAD_USER_FAILURE,
+      error: e.response.data,
+    });
+  }
+}
 function* loadMyInfo() {
   try {
     const data = yield call(loadMyInfoAPI);
@@ -248,9 +251,9 @@ function* removeFollower(action) {
 function* watchLoadMyInfo() {
   yield takeEvery(LOAD_MY_INFO_REQUEST, loadMyInfo);
 }
-// function* watchLoadUser() {
-//   //yield takeEvery(LOAD_USER_REQUEST, loadUser);
-// }
+function* watchLoadUser() {
+  yield takeEvery(LOAD_USER_REQUEST, loadUser);
+}
 function* watchFollow() {
   yield takeEvery(FOLLOW_REQUEST, follow);
 }
@@ -282,6 +285,7 @@ function* watchRemoveFollower() {
 
 export default function* userSaga() {
   yield all([
+    fork(watchLoadUser),
     fork(watchRemoveFollower),
     fork(watchLoadFollowings),
     fork(watchLoadFollowers),

@@ -25,15 +25,20 @@ import {
   RETWEET_REQUEST,
   RETWEET_SUCCESS,
   RETWEET_FAILURE,
+  LOAD_POST_REQUEST,
+  LOAD_POST_SUCCESS,
+  LOAD_POST_FAILURE,
 } from "../reducers/post";
 import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from "../reducers/user";
 
-async function loadPostAPI(lastId) {
+async function loadPostsAPI(lastId) {
   //data가 undifined인 경우 0
   const response = await axios.get(`/posts?lastId=${lastId || 0}`); //queryString (data 캐싱도 할 수 있다.)
   return response.data;
 }
-
+function loadPostAPI(data) {
+  return axios.get(`/post/${data}`);
+}
 async function addPostAPI(data) {
   const response = await axios.post("/post", data);
   return response.data;
@@ -62,11 +67,26 @@ async function retweetAPI(data) {
   const response = await axios.post(`/post/${data}/retweet`); //formData를 그대로 넣어줘야 함.
   return response.data;
 }
+function* loadPost(action) {
+  try {
+    const result = yield call(loadPostAPI, action.data);
+    yield put({
+      type: LOAD_POST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LOAD_POST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
 
 function* loadPosts(action) {
   try {
     console.log(action.lastId);
-    const data = yield call(loadPostAPI, action.lastId);
+    const data = yield call(loadPostsAPI, action.lastId);
     yield put({
       type: LOAD_POSTS_SUCCESS,
       data,
@@ -191,8 +211,11 @@ function* retweet(action) {
   }
 }
 
-function* watchLoadPost() {
+function* watchLoadPosts() {
   yield throttle(5000, LOAD_POSTS_REQUEST, loadPosts);
+}
+function* watchLoadPost() {
+  yield takeEvery(LOAD_POST_REQUEST, loadPost);
 }
 function* watchAddPost() {
   yield takeEvery(ADD_POST_REQUEST, addPost);
@@ -218,13 +241,14 @@ function* watchRetweet() {
 
 export default function* postSaga() {
   yield all([
+    fork(watchLoadPost),
     fork(watchRetweet),
     fork(watchuploadImages),
     fork(watchLikePost),
     fork(watchunlikePost),
     fork(watchAddComment),
     fork(watchAddPost),
-    fork(watchLoadPost),
+    fork(watchLoadPosts),
     fork(watchRemovePost),
   ]);
 }

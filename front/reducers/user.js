@@ -1,5 +1,9 @@
 import produce from "immer";
 
+export const LOAD_USER_REQUEST = "users/LOAD_USER_REQUEST";
+export const LOAD_USER_SUCCESS = "users/LOAD_USER_SUCCESS";
+export const LOAD_USER_FAILURE = "users/LOAD_USER_FAILURE";
+
 export const LOAD_MY_INFO_REQUEST = "users/LOAD_MY_INFO_REQUEST";
 export const LOAD_MY_INFO_SUCCESS = "users/LOAD_MY_INFO_SUCCESS";
 export const LOAD_MY_INFO_FAILURE = "users/LOAD_MY_INFO_FAILURE";
@@ -92,12 +96,29 @@ export const initialState = {
   removeFollowerLoading: false,
 
   me: null,
-  UserInfo: null,
+  userInfo: null,
 };
 
 export default function reducer(state = initialState, action) {
   return produce(state, (draft) => {
     switch (action.type) {
+      case LOAD_USER_REQUEST:
+        draft.loadUserLoading = true;
+        draft.loadUserDone = false;
+        draft.loadUserError = null;
+        break;
+      case LOAD_USER_SUCCESS:
+        draft.loadUserLoading = false;
+        draft.loadUserDone = true;
+        draft.loadUserError = null;
+        draft.userInfo = action.data;
+        break;
+      case LOAD_USER_FAILURE:
+        draft.loadUserError = action.error;
+        draft.loadUserLoading = false;
+        draft.loadUserDone = false;
+        break;
+
       case LOAD_MY_INFO_REQUEST:
         draft.loadMyInfoLoading = true;
         draft.loadMyInfoDone = false;

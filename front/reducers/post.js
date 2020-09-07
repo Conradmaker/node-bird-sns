@@ -1,14 +1,14 @@
-import shortId from "shortid";
-import { ADD_POST_TO_ME } from "./user";
 import produce from "immer";
-import faker from "faker";
-import shortid from "shortid";
 
 export const initialState = {
   mainPosts: [],
   imagePath: [],
 
   hasMorePost: true,
+  singlePost: null,
+  loadPostLoading: false,
+  loadPostDone: false,
+  loadPostError: null,
 
   loadPostsLoading: false,
   loadPostsDone: false,
@@ -46,6 +46,10 @@ export const initialState = {
 
 //액션생성
 export const REMOVE_IMAGE = "users/REMOVE_IMAGE";
+
+export const LOAD_POST_REQUEST = "LOAD_POST_REQUEST";
+export const LOAD_POST_SUCCESS = "LOAD_POST_SUCCESS";
+export const LOAD_POST_FAILURE = "LOAD_POST_FAILURE";
 
 export const UPLOAD_IMAGES_REQUEST = "UPLOAD_IMAGES_REQUEST";
 export const UPLOAD_IMAGES_SUCCESS = "UPLOAD_IMAGES_SUCCESS";
@@ -122,6 +126,23 @@ export default function reducer(state = initialState, action) {
         draft.uploadImagesLoading = false;
         draft.uploadImagesDone = false;
         draft.uploadImagesError = action.error;
+        break;
+
+      case LOAD_POST_REQUEST:
+        draft.loadPostLoading = true;
+        draft.loadPostDone = false;
+        draft.loadPostError = null;
+        break;
+      case LOAD_POST_SUCCESS:
+        draft.loadPostLoading = false;
+        draft.loadPostDone = true;
+        draft.loadPostError = null;
+        draft.singlePost = action.data;
+        break;
+      case LOAD_POST_FAILURE:
+        draft.loadPostLoading = false;
+        draft.loadPostDone = false;
+        draft.loadPostError = action.error;
         break;
 
       case LOAD_POSTS_REQUEST:

@@ -71,7 +71,7 @@ export const getServerSideProps = wrapper.getServerSideProps(
       axios.defaults.headers.Cookie = cookie; //쿠키를 넣어주고
     }
 
-    console.log(context); //context에는 무엇이 들어있을까?
+    //console.log(context); //context에는 무엇이 들어있을까?
     //기존에 useEffect에 있던걸 가져옴
     context.store.dispatch({
       type: LOAD_MY_INFO_REQUEST,

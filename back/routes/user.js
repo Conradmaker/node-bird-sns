@@ -212,4 +212,33 @@ router.delete("/follower/:id", isLoggedIn, async (req, res, next) => {
   }
 });
 
+//특정 사용자를 가져오는 라우터
+router.get("/:id", async (req, res, next) => {
+  try {
+    const fullUserWithoutPassword = await User.findOne({
+      where: { id: req.params.id },
+      attributes: { exclude: ["password"] }, //비밀번호 빼고
+      //관계데이터
+      include: [
+        { model: Post, attributes: ["id"] }, // 개시글 말고 아이디만 (몇개 몇명인지만 세니까)
+        { model: User, as: "Followings", attributes: ["id"] }, //as 써줬으면 여기서도 써줘야함
+        { model: User, as: "Followers", attributes: ["id"] },
+      ],
+    });
+    if (fullUserWithoutPassword) {
+      //다른 사람의 데이터이기 때문에 개신정보를 잘 숨겨서 보내준다.
+      const data = fullUserWithoutPassword.toJSON(); // Sequelize에서 보내준 데이터를 수정하기 위해
+      data.Posts = data.Posts.length;
+      data.Followers = data.Followers.length;
+      data.Followings = data.Followings.length;
+      res.status(200).json(data); //쿠키 있으면 보내고
+    } else {
+      res.status(403).send("그런 유저 없습니다."); //user/10000이런경우를 위해
+    }
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
+});
+
 module.exports = router;
