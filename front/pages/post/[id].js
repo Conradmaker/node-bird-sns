@@ -1,5 +1,6 @@
 //다이나믹 라우팅 /post/[id].js
-
+import React from "react";
+import Head from "next/head";
 import { useRouter } from "next/router";
 import wrapper from "../../store/configureStore";
 import { LOAD_MY_INFO_REQUEST } from "../../reducers/user";
@@ -22,15 +23,34 @@ const Post = () => {
     }
   }, [loadPostError]);
   return (
-    <>
+    <AppLayout>
+      <Head>
+        <title>
+          {singlePost.User.nickname}
+          님의 글
+        </title>
+        <meta name="description" content={singlePost.content} />
+        <meta
+          property="og:title"
+          content={`${singlePost.User.nickname}님의 게시글`}
+        />
+        <meta property="og:description" content={singlePost.content} />
+        <meta
+          property="og:image"
+          content={
+            singlePost.Images[0]
+              ? singlePost.Images[0].src
+              : "https://nodebird.com/favicon.ico"
+          }
+        />
+        <meta property="og:url" content={`https://nodebird.com/post/${id}`} />
+      </Head>
       {singlePost ? (
-        <AppLayout>
-          <PostCard post={singlePost} />
-        </AppLayout>
+        <PostCard post={singlePost} />
       ) : (
-        <AppLayout>해당 아이디에 해당하는 글이 없네요..</AppLayout>
+        <div>해당글이 존재하지 않습니다.</div>
       )}
-    </>
+    </AppLayout>
   );
 };
 
