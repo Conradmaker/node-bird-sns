@@ -5,8 +5,10 @@ import PostForm from "../components/PostForm";
 import PostCard from "../components/PostCard";
 import { LOAD_POSTS_REQUEST } from "../reducers/post";
 import { LOAD_MY_INFO_REQUEST } from "../reducers/user";
+import wrapper from "../store/configureStore";
+import { END } from "redux-saga";
 
-export default function index() {
+function index() {
   const dispatch = useDispatch();
   const { me } = useSelector((state) => state.user);
   const {
@@ -20,10 +22,7 @@ export default function index() {
       alert(retweetError);
     }
   }, [retweetError]);
-  useEffect(() => {
-    dispatch({ type: LOAD_MY_INFO_REQUEST });
-    dispatch({ type: LOAD_POSTS_REQUEST });
-  }, [dispatch]);
+
   useEffect(() => {
     function onScroll() {
       if (
@@ -56,3 +55,21 @@ export default function index() {
     </>
   );
 }
+//이렇게 해주면 이부분이 index보다 먼저 실행된다.
+//화면을 그리기 전에 서버에서 이부분을 실행
+export const getServerSideProps = wrapper.getServerSideProps(
+  async (context) => {
+    console.log(context); //context에는 무엇이 들어있을까?
+    //기존에 useEffect에 있던걸 가져옴
+    context.store.dispatch({
+      type: LOAD_MY_INFO_REQUEST,
+    });
+    context.store.dispatch({
+      type: LOAD_POSTS_REQUEST,
+    });
+    context.store.dispatch(END); //saga에서 불러옴 (끝날때까지 기다리라고)
+    await context.store.sagaTask.toPromise(); //(sagaTask)는 스토어에서 등록함
+  }
+);
+
+export default index;
