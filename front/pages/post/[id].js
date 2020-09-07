@@ -17,7 +17,9 @@ const Post = () => {
   const { id } = router.query; //이렇게 URI데이터를 가져온다 .
 
   useEffect(() => {
-    alert(loadPostError);
+    if (loadPostError) {
+      alert(loadPostError);
+    }
   }, [loadPostError]);
   return (
     <>
