@@ -1,9 +1,8 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useRef, useEffect, useCallback } from "react";
 import { Form, Input, Button } from "antd";
 import { useSelector, useDispatch } from "react-redux";
 import useInput from "../hooks/useInput";
 import {
-  addPost,
   UPLOAD_IMAGES_REQUEST,
   REMOVE_IMAGE,
   ADD_POST_REQUEST,
@@ -11,7 +10,7 @@ import {
 
 export default function PostForm() {
   const { imagePath, addPostDone } = useSelector((state) => state.post);
-  const [text, onChangeText, setText] = useInput(text);
+  const [text, onChangeText, setText] = useInput("");
 
   useEffect(() => {
     if (addPostDone) {

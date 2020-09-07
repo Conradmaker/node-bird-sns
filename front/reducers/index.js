@@ -9,12 +9,13 @@ const rootReducer = (state, action) => {
     case HYDRATE:
       console.log("HYDRATE", action);
       return action.payload;
-    default:
+    default: {
       const combinedReducer = combineReducers({
         user,
         post,
       });
       return combinedReducer(state, action);
+    }
   }
 };
 //구조를 바꾼다.

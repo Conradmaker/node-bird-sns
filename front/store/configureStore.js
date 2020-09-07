@@ -1,19 +1,10 @@
-import { createWrapper } from "next-redux-wrapper";
-import { createStore, applyMiddleware, compose } from "redux";
-import reducer from "../reducers";
-import { composeWithDevTools } from "redux-devtools-extension";
+import { applyMiddleware, createStore, compose } from "redux";
 import createSagaMiddleware from "redux-saga";
-import rootSaga from "../sagas"; //미리 import
+import { createWrapper } from "next-redux-wrapper";
+import { composeWithDevTools } from "redux-devtools-extension";
 
-function createThunkMiddleware(extraArgument) {
-  return ({ dispatch, getState }) => (next) => (action) => {
-    if (typeof action === "function") {
-      return action(dispatch, getState, extraArgument);
-    }
-
-    return next(action);
-  };
-}
+import reducer from "../reducers";
+import rootSaga from "../sagas";
 
 const configureStore = () => {
   const sagaMiddleware = createSagaMiddleware(); //만드들기
@@ -26,7 +17,8 @@ const configureStore = () => {
   store.sagaTask = sagaMiddleware.run(rootSaga); //추가(rootSaga는 직접 작성)
   return store;
 };
+
 const wrapper = createWrapper(configureStore, {
-  debug: process.env.NODE_ENV === "development",
+  debug: false, //process.env.NODE_ENV === "development",
 });
 export default wrapper;

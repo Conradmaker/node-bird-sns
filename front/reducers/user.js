@@ -51,6 +51,10 @@ export const initialState = {
   loadUserError: null,
   loadUserLoading: false,
 
+  loadMyInfoDone: false,
+  loadMyInfoError: null,
+  loadMyInfoLoading: false,
+
   followDone: false,
   followError: null,
   followLoading: false,
@@ -88,28 +92,27 @@ export const initialState = {
   removeFollowerLoading: false,
 
   me: null,
-  signUpData: {},
-  loginData: {},
+  UserInfo: null,
 };
 
 export default function reducer(state = initialState, action) {
   return produce(state, (draft) => {
     switch (action.type) {
       case LOAD_MY_INFO_REQUEST:
-        draft.loadUserLoading = true;
-        draft.loadUserDone = false;
-        draft.loadUserError = null;
+        draft.loadMyInfoLoading = true;
+        draft.loadMyInfoDone = false;
+        draft.loadMyInfoError = null;
         break;
       case LOAD_MY_INFO_SUCCESS:
-        draft.loadUserLoading = false;
-        draft.loadUserDone = true;
-        draft.loadUserError = null;
+        draft.loadMyInfoLoading = false;
+        draft.loadMyInfoDone = true;
+        draft.loadMyInfoError = null;
         draft.me = action.data;
         break;
       case LOAD_MY_INFO_FAILURE:
-        draft.loadUserError = action.error;
-        draft.loadUserLoading = false;
-        draft.loadUserDone = false;
+        draft.loadMyInfoError = action.error;
+        draft.loadMyInfoLoading = false;
+        draft.loadMyInfoDone = false;
         break;
 
       case UNFOLLOW_REQUEST:
