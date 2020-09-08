@@ -1,8 +1,9 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 const passport = require("passport");
-const { User, Post } = require("../models"); //db.User를 가져온다
+const { User, Post, Image, Comment } = require("../models"); //db.User를 가져온다
 const { isLoggedIn, isNotLoggedIn } = require("./middlewares");
+const { Op } = require("sequelize");
 
 const router = express.Router();
 
@@ -241,4 +242,46 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
+//사용자의 게시글들
+router.get("/:userId/posts", async (req, res, next) => {
+  try {
+    const where = { UserId: req.params.userId };
+    if (parseInt(req.query.lastId, 10)) {
+      //초기 로딩이 아닐경우 이부분(초기로딩이면 0) lastId보다 작은걸 불러와라
+      where.id = { [Op.lt]: parseInt(req.query.lastId, 10) }; //보다 작은걸 불러오면 된다.
+    }
+    //DB여러개 가져올떄
+    const posts = await Post.findAll({
+      where,
+      limit: 10, //10개만 가져와라
+      order: [
+        ["createdAt", "DESC"], //게시글늦게 생성된 순서로
+        [Comment, "createdAt", "DESC"], //댓글늦게 생성된 순서로
+      ],
+
+      include: [
+        { model: User, attributes: ["id", "nickname"] }, //작성자
+        { model: User, as: "Likers", attributes: ["id"] }, //좋아요 누른사람
+        { model: Image },
+        {
+          model: Comment, //댓글작성자를 다시
+          include: [{ model: User, attributes: ["id", "nickname"] }],
+        },
+        {
+          //리트윗 게시글 포함하도록
+          model: Post,
+          as: "Retweet",
+          include: [
+            { model: User, attributes: ["id", "nickname"] },
+            { model: Image },
+          ],
+        },
+      ],
+    });
+    res.status(200).json(posts);
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
+});
 module.exports = router;

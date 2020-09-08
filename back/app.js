@@ -2,6 +2,7 @@ const express = require("express");
 const postRouter = require("./routes/post");
 const userRouter = require("./routes/user");
 const postsRouter = require("./routes/posts");
+const hashtagRouter = require("./routes/hashtag");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
@@ -59,6 +60,7 @@ app.get("/api", (req, res) => {
 app.use("/post", postRouter);
 app.use("/posts", postsRouter);
 app.use("/user", userRouter);
+app.use("/hashtag", hashtagRouter);
 
 //에러처리 미들웨어 (err,req,res,next) 4개
 //에러페이지를 보내주거나, 에러 내용은 바꾼다거나..

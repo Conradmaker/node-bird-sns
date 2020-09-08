@@ -27,10 +27,26 @@ import {
   RETWEET_FAILURE,
   LOAD_POST_REQUEST,
   LOAD_POST_SUCCESS,
+  LOAD_HASHTAG_POSTS_REQUEST,
+  LOAD_USER_POSTS_REQUEST,
+  LOAD_USER_POSTS_SUCCESS,
+  LOAD_USER_POSTS_FAILURE,
+  LOAD_HASHTAG_POSTS_SUCCESS,
+  LOAD_HASHTAG_POSTS_FAILURE,
   LOAD_POST_FAILURE,
 } from "../reducers/post";
 import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from "../reducers/user";
 
+async function loadUserPostsAPI(data, lastId) {
+  const response = await axios.get(`/user/${data}/posts?lastId=${lastId || 0}`);
+  return response.data;
+}
+async function loadHashtagPostsAPI(data, lastId) {
+  const response = await axios.get(
+    `/hashtag/${encodeURIComponent(data)}?lastId=${lastId || 0}` //encodeURIComponent = 한글들어가면 에러기 때문에
+  );
+  return response.data;
+}
 async function loadPostsAPI(lastId) {
   //data가 undifined인 경우 0
   const response = await axios.get(`/posts?lastId=${lastId || 0}`); //queryString (data 캐싱도 할 수 있다.)
@@ -122,11 +138,11 @@ function* removePost(action) {
     const data = yield call(removePostAPI, action.data);
     yield put({
       type: REMOVE_POST_SUCCESS,
-      data: action.data,
+      data: data,
     });
     yield put({
       type: REMOVE_POST_OF_ME,
-      data: action.data,
+      data: data,
     });
   } catch (e) {
     yield put({
@@ -210,7 +226,38 @@ function* retweet(action) {
     });
   }
 }
-
+function* loadUserPosts(action) {
+  try {
+    const data = yield call(loadUserPostsAPI, action.data, action.lastId);
+    console.log(data);
+    yield put({
+      type: LOAD_USER_POSTS_SUCCESS,
+      data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LOAD_USER_POSTS_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+function* loadHashtagPosts(action) {
+  try {
+    const data = yield call(loadHashtagPostsAPI, action.data, action.lastId);
+    console.log(data);
+    yield put({
+      type: LOAD_HASHTAG_POSTS_SUCCESS,
+      data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LOAD_HASHTAG_POSTS_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
 function* watchLoadPosts() {
   yield throttle(5000, LOAD_POSTS_REQUEST, loadPosts);
 }
@@ -238,9 +285,17 @@ function* watchuploadImages() {
 function* watchRetweet() {
   yield takeEvery(RETWEET_REQUEST, retweet);
 }
+function* watchLoadUserPosts() {
+  yield takeEvery(LOAD_USER_POSTS_REQUEST, loadUserPosts);
+}
+function* watchLoadHashtagPosts() {
+  yield takeEvery(LOAD_HASHTAG_POSTS_REQUEST, loadHashtagPosts);
+}
 
 export default function* postSaga() {
   yield all([
+    fork(watchLoadHashtagPosts),
+    fork(watchLoadUserPosts),
     fork(watchLoadPost),
     fork(watchRetweet),
     fork(watchuploadImages),

@@ -47,6 +47,14 @@ export const initialState = {
 //액션생성
 export const REMOVE_IMAGE = "users/REMOVE_IMAGE";
 
+export const LOAD_USER_POSTS_REQUEST = "LOAD_USER_POSTS_REQUEST";
+export const LOAD_USER_POSTS_SUCCESS = "LOAD_USER_POSTS_SUCCESS";
+export const LOAD_USER_POSTS_FAILURE = "LOAD_USER_POSTS_FAILURE";
+
+export const LOAD_HASHTAG_POSTS_REQUEST = "LOAD_HASHTAG_POSTS_REQUEST";
+export const LOAD_HASHTAG_POSTS_SUCCESS = "LOAD_HASHTAG_POSTS_SUCCESS";
+export const LOAD_HASHTAG_POSTS_FAILURE = "LOAD_HASHTAG_POSTS_FAILURE";
+
 export const LOAD_POST_REQUEST = "LOAD_POST_REQUEST";
 export const LOAD_POST_SUCCESS = "LOAD_POST_SUCCESS";
 export const LOAD_POST_FAILURE = "LOAD_POST_FAILURE";
@@ -145,18 +153,24 @@ export default function reducer(state = initialState, action) {
         draft.loadPostError = action.error;
         break;
 
+      case LOAD_USER_POSTS_REQUEST: //상태 재사용
+      case LOAD_HASHTAG_POSTS_REQUEST:
       case LOAD_POSTS_REQUEST:
         draft.loadPostsLoading = true;
         draft.loadPostsDone = false;
         draft.loadPostsError = null;
         break;
+      case LOAD_USER_POSTS_SUCCESS: //상태 재사용
+      case LOAD_HASHTAG_POSTS_SUCCESS:
       case LOAD_POSTS_SUCCESS:
         draft.loadPostsLoading = false;
         draft.loadPostsDone = true;
         draft.loadPostsError = null;
-        draft.mainPosts = draft.mainPosts.concat(action.data); //앞에 추가해야 게시글이 위에 나타난다.
+        draft.mainPosts = draft.mainPosts.concat(action.data); //앞에 추가해야 게시글이 위에 나타난다.   //어차피 index에서만 쓰이니까
         draft.hasMorePost = action.data.length === 10;
         break;
+      case LOAD_USER_POSTS_FAILURE: //상태 재사용
+      case LOAD_HASHTAG_POSTS_FAILURE:
       case LOAD_POSTS_FAILURE:
         draft.loadPostsLoading = false;
         draft.loadPostsDone = false;
