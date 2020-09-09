@@ -6,13 +6,16 @@
   "license": "MIT",
   "scripts": {
     "dev": "next",
-    "build": "yarn build"
+    "build": "cross-env ANALYZE=true NODE_ENV=production next build"
   },
   "dependencies": {
     "@ant-design/icons": "^4.2.1",
+    "@next/bundle-analyzer": "^9.5.3",
     "antd": "^4.5.1",
     "axios": "^0.19.2",
     "babel-plugin-styled-components": "^1.11.1",
+    "compression-webpack-plugin": "^5.0.2",
+    "cross-env": "^7.0.2",
     "dayjs": "^1.8.35",
     "eslint-plugin-import": "^2.22.0",
     "faker": "^4.1.0",

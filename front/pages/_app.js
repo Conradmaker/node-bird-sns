@@ -4,7 +4,7 @@ import "antd/dist/antd.css";
 import wrapper from "../store/configureStore";
 //import withReduxSaga from "next-redux-saga"; //next와 redux-saga를 연결해주는 library
 //필요없어짐
-function _app({ Component }) {
+const _app = ({ Component }) => {
   return (
     <>
       <Head>
@@ -14,7 +14,7 @@ function _app({ Component }) {
       <Component />
     </>
   );
-}
+};
 //감싸준다.
 
 //wrapper로 서버사이드 렌더링 진행
