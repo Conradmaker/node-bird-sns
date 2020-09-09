@@ -21,6 +21,9 @@ import {
 } from "../reducers/post";
 import FollowButton from "./FollowButton";
 import Link from "next/link";
+import dayjs from "dayjs";
+import "dayjs/locale/ko";
+dayjs.locale("ko");
 
 export default function PostCard({ post }) {
   const { removePostLoading, retweetError } = useSelector(
@@ -104,6 +107,9 @@ export default function PostCard({ post }) {
               )
             }
           >
+            <div style={{ float: "right" }}>
+              {dayjs(post.createdAt).format("YYYY.MM.DD")}
+            </div>
             <Card.Meta
               avatar={
                 <Link href={`/user/${post.Retweet.User.id}`}>
@@ -117,19 +123,25 @@ export default function PostCard({ post }) {
             />
           </Card>
         ) : (
-          <Card.Meta
-            avatar={
-              <Link href={`/user/${post.User.id}`}>
-                <a>
-                  <Avatar>{post.User.nickname[0]}</Avatar>
-                </a>
-              </Link>
-            }
-            title={post.User.nickname}
-            description={<PostCardContent postData={post.content} />}
-          />
+          <>
+            <div style={{ float: "right" }}>
+              {dayjs(post.createdAt).format("YYYY.MM.DD")}
+            </div>
+            <Card.Meta
+              avatar={
+                <Link href={`/user/${post.User.id}`}>
+                  <a>
+                    <Avatar>{post.User.nickname[0]}</Avatar>
+                  </a>
+                </Link>
+              }
+              title={post.User.nickname}
+              description={<PostCardContent postData={post.content} />}
+            />
+          </>
         )}
       </Card>
+
       {commentFormOpened && (
         <>
           <CommentForm post={post} />
