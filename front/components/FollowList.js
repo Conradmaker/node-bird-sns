@@ -4,7 +4,7 @@ import { StopOutlined } from "@ant-design/icons"; //아이콘은 용량이 크�
 import { useDispatch } from "react-redux";
 import { UNFOLLOW_REQUEST, REMOVE_FOLLOWER_REQUEST } from "../reducers/user";
 
-export default function FollowList({ header, data }) {
+export default function FollowList({ header, data, onClickMore, loading }) {
   const dispatch = useDispatch();
   const onCancel = (id) => {
     if (header === "팔로잉") {
@@ -28,7 +28,9 @@ export default function FollowList({ header, data }) {
       header={<div>{header}</div>}
       loadMore={
         <div style={{ textAlign: "center", margin: "10px 0" }}>
-          <Button>더 보기</Button>
+          <Button onClick={onClickMore} loading={loading}>
+            더 보기
+          </Button>
         </div>
       }
       bordered
