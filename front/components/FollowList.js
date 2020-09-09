@@ -22,8 +22,7 @@ export default function FollowList({ header, data, onClickMore, loading }) {
   return (
     <List
       style={{ marginBottom: 20 }}
-      //list이지만 grid로
-      grid={{ gutter: 4, xs: 2, md: 3 }}
+      grid={{ gutter: 4, xs: 2, sm: 3, md: 3, lg: 3, xl: 3, xxl: 3 }}
       size="small"
       header={<div>{header}</div>}
       loadMore={

@@ -32,11 +32,13 @@ export default function AppLayout({ children }) {
             <a>프로필</a>
           </Link>
         </Menu.Item>
-        <Menu.Item>
-          <Link href="/signup">
-            <a>회원가입</a>
-          </Link>
-        </Menu.Item>
+        {!me && (
+          <Menu.Item>
+            <Link href="/signup">
+              <a>회원가입</a>
+            </Link>
+          </Menu.Item>
+        )}
         <Menu.Item>
           <SearchInput
             enterButton

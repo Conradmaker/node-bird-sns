@@ -1,0 +1,2 @@
+COOKIE_SECRET= 키
+DB_PASSWORD=데이터베이스 비밀번호

@@ -33,6 +33,7 @@ export default function profile() {
     `http://localhost:3030/user/followings?limit=${followingsLimit}`,
     fetcher
   );
+  console.log(followingsData);
   //data, error 둘다 없으면 로딩중
 
   //이걸 바꾸는 거에요

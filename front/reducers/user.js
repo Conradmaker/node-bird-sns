@@ -294,15 +294,8 @@ export default function reducer(state = initialState, action) {
         draft.me.Posts.unshift({ id: action.data });
         break;
       case REMOVE_POST_OF_ME:
-        draft.me.Posts = draft.me.Posts.filter((y) => y.id !== action.data);
+        draft.me.Posts = draft.me.Posts.filter((y) => y.id !== action.data.id);
         break;
-      // return {
-      //   ...state,
-      //   me: {
-      //     ...state.me,
-      //     Posts: state.me.Posts.filter((y) => y.id !== action.data),
-      //   },
-      // };
       default:
         break;
     }

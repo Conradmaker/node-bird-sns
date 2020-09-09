@@ -202,7 +202,9 @@ export default function reducer(state = initialState, action) {
         draft.removePostLoading = false;
         draft.removePostDone = true;
         draft.removePostError = null;
-        draft.mainPosts = draft.mainPosts.filter((v) => v.id !== action.data);
+        draft.mainPosts = draft.mainPosts.filter(
+          (v) => v.id !== action.data.id
+        );
         break;
       case REMOVE_POST_FAILURE:
         draft.removePostLoading = false;
