@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import Link from "next/link";
 import { Menu, Input, Row, Col } from "antd";
-import LoginForm from "./loginForm";
+import LoginForm from "./LoginForm";
 import styled from "styled-components";
 import UserProfile from "./UserProfile";
 import { useSelector } from "react-redux";
