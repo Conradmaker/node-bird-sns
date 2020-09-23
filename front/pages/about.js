@@ -47,15 +47,16 @@ const Profile = () => {
   );
 };
 
-export const getStaticProps = wrapper.getStaticProps(async (context) => {
-  console.log("getStaticProps");
-  context.store.dispatch({
-    type: LOAD_USER_REQUEST, //특정한 사용자정보를 가져오는 것.
-    data: 1,
-  });
-  context.store.dispatch(END);
-  await context.store.sagaTask.toPromise();
-});
+export const getServerSideProps = wrapper.getServerSideProps(
+  async (context) => {
+    context.store.dispatch({
+      type: LOAD_USER_REQUEST, //특정한 사용자정보를 가져오는 것.
+      data: 1,
+    });
+    context.store.dispatch(END);
+    await context.store.sagaTask.toPromise();
+  }
+);
 
 export default Profile;
 
